@@ -28,7 +28,7 @@ function ShopContent() {
 
   const [activeCategory, setActiveCategory] = useState<string>(initialCategory);
   const [searchQuery, setSearchQuery] = useState(initialQuery);
-  const [maxPrice, setMaxPrice] = useState<number>(50);
+  const [maxPrice, setMaxPrice] = useState<number>(500);
   const [sortBy, setSortBy] = useState<"featured" | "price-low" | "price-high" | "rating">("featured");
 
   useEffect(() => {
@@ -114,12 +114,13 @@ function ShopContent() {
           <div className="flex items-center justify-center gap-4 flex-wrap">
             <div className="flex items-center gap-2">
               <span className="text-xs font-bold text-[#2E5E4E] flex items-center gap-1">
-                <Filter className="h-3.5 w-3.5 text-[#C9A66B]" /> Max Price: ${maxPrice}
+                <Filter className="h-3.5 w-3.5 text-[#C9A66B]" /> Max Price: ₹{maxPrice}
               </span>
               <input
                 type="range"
-                min="10"
-                max="50"
+                min="100"
+                max="500"
+                step="10"
                 value={maxPrice}
                 onChange={(e) => setMaxPrice(Number(e.target.value))}
                 className="accent-[#2E5E4E] cursor-pointer"

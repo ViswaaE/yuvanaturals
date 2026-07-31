@@ -30,6 +30,8 @@ export const metadata: Metadata = {
   },
 };
 
+import { CartProvider } from "@/context/cart-context";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -40,7 +42,9 @@ export default function RootLayout({
       lang="en"
       className={`${serifFont.variable} ${sansFont.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-[#FAF8F3] text-[#1F332B] font-sans">{children}</body>
+      <body className="min-h-full flex flex-col bg-[#FAF8F3] text-[#1F332B] font-sans">
+        <CartProvider>{children}</CartProvider>
+      </body>
     </html>
   );
 }

@@ -83,7 +83,7 @@ export function HeroSection() {
                 href="/shop?slug=premium-pure-goat-milk-lavender-bath-bar"
                 className="rounded-full bg-[#2E5E4E] px-4 py-2 text-[11px] font-bold uppercase tracking-wider text-[#FAF8F3] hover:bg-[#C9A66B] hover:text-[#2E5E4E] transition"
               >
-                View — $18
+                View — ₹180
               </Link>
             </div>
           </div>

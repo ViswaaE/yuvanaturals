@@ -4,8 +4,10 @@ import { useState } from "react";
 import Link from "next/link";
 import { Heart, Menu, Search, ShoppingBag, User, X } from "lucide-react";
 import { YuvaLogo } from "./yuva-logo";
+import { useCart } from "@/context/cart-context";
 
 export function SiteHeader() {
+  const { totalItemsCount } = useCart();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -21,7 +23,7 @@ export function SiteHeader() {
     <header className="sticky top-0 z-50 border-b border-[#2E5E4E]/10 bg-[#FAF8F3]/95 backdrop-blur-md">
       {/* Top Announcement Banner */}
       <div className="bg-[#2E5E4E] px-4 py-1.5 text-center text-[11px] font-medium tracking-wider text-[#FAF8F3]">
-        <span className="text-[#C9A66B] font-bold">FREE SHIPPING</span> ON ALL ORDERS OVER $50 • HANDCRAFTED BOTANICAL CARE
+        <span className="text-[#C9A66B] font-bold">FREE SHIPPING</span> ON ALL ORDERS OVER ₹500 • HANDCRAFTED BOTANICAL CARE
       </div>
 
       {/* Main Header Bar - 90-96px Height with Generous Spacing & Vertically Centered Logo */}
@@ -82,7 +84,7 @@ export function SiteHeader() {
               <button className="flex items-center gap-1.5 rounded-full bg-[#2E5E4E] px-4 py-2 text-xs font-bold text-[#FAF8F3] shadow-sm transition hover:bg-[#C9A66B] hover:text-[#2E5E4E]">
                 <ShoppingBag className="h-4 w-4 text-[#C9A66B]" />
                 <span className="hidden sm:inline text-[11px] uppercase tracking-wider">Cart</span>
-                <span className="rounded-full bg-white/20 px-1.5 py-0.5 text-[10px]">2</span>
+                <span className="rounded-full bg-white/20 px-1.5 py-0.5 text-[10px]">{totalItemsCount}</span>
               </button>
             </Link>
           </div>

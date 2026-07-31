@@ -21,7 +21,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "What is your shipping & return policy?",
-    a: "We offer complimentary express shipping on all orders over $50. If you are unsatisfied with your ritual within 30 days, we provide hassle-free exchanges or full refunds.",
+    a: "We offer complimentary express shipping on all orders over ₹500. If you are unsatisfied with your ritual within 30 days, we provide hassle-free exchanges or full refunds.",
   },
 ];
 

@@ -41,7 +41,7 @@ const ALL_FAQS = [
     items: [
       {
         q: "How long does shipping take and do you offer complimentary delivery?",
-        a: "We offer complimentary standard shipping on all orders over $50. Standard delivery takes 3 to 5 business days. Express shipping (1 to 2 business days) is available at checkout for $12.",
+        a: "We offer complimentary standard shipping on all orders over ₹500. Standard delivery takes 3 to 5 business days. Express shipping (1 to 2 business days) is available at checkout for ₹120.",
       },
       {
         q: "What is your return & satisfaction guarantee policy?",

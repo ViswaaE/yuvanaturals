@@ -92,9 +92,9 @@ export function QuickViewModal({ product, onClose }: QuickViewModalProps) {
               </div>
 
               <div className="mt-4 flex items-baseline gap-3">
-                <span className="text-3xl font-bold text-[#2f2a25]">${product.price}</span>
+                <span className="text-3xl font-bold text-[#2f2a25]">₹{product.price}</span>
                 {product.originalPrice && (
-                  <span className="text-lg text-[#9d6d4f] line-through">${product.originalPrice}</span>
+                  <span className="text-lg text-[#9d6d4f] line-through">₹{product.originalPrice}</span>
                 )}
               </div>
 
@@ -156,7 +156,7 @@ export function QuickViewModal({ product, onClose }: QuickViewModalProps) {
                     </>
                   ) : (
                     <>
-                      <ShoppingBag className="h-4 w-4" /> Add to Cart (${product.price * quantity})
+                      <ShoppingBag className="h-4 w-4" /> Add to Cart (₹{product.price * quantity})
                     </>
                   )}
                 </button>

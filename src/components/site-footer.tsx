@@ -34,7 +34,7 @@ export function SiteFooter() {
             </div>
             <div>
               <p className="text-xs font-bold uppercase tracking-wider text-[#FAF8F3]">Free Express Delivery</p>
-              <p className="text-[11px] text-[#7A9474]">On orders over $50</p>
+              <p className="text-[11px] text-[#7A9474]">On orders over ₹500</p>
             </div>
           </div>
 

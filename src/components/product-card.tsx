@@ -106,9 +106,9 @@ export function ProductCard({ product }: { product: Product }) {
               </div>
 
               <div className="flex items-baseline gap-2">
-                <span className="text-lg font-bold text-[#2E5E4E]">${product.price}</span>
+                <span className="text-lg font-bold text-[#2E5E4E]">₹{product.price}</span>
                 {product.originalPrice && (
-                  <span className="text-xs text-[#C9A66B] line-through">${product.originalPrice}</span>
+                  <span className="text-xs text-[#C9A66B] line-through">₹{product.originalPrice}</span>
                 )}
               </div>
             </div>

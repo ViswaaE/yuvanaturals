@@ -132,9 +132,9 @@ export function ProductDetailView({ product, relatedProducts }: { product: Produ
             </div>
 
             <div className="mt-6 flex items-baseline gap-4">
-              <span className="text-4xl font-extrabold text-[#2E5E4E]">${product.price}</span>
+              <span className="text-4xl font-extrabold text-[#2E5E4E]">₹{product.price}</span>
               {product.originalPrice && (
-                <span className="text-xl text-[#C9A66B] line-through">${product.originalPrice}</span>
+                <span className="text-xl text-[#C9A66B] line-through">₹{product.originalPrice}</span>
               )}
               <span className="rounded-full bg-[#F6F1E9] px-3 py-1 text-xs font-bold text-[#2E5E4E]">
                 Free Luxury Shipping
@@ -196,7 +196,7 @@ export function ProductDetailView({ product, relatedProducts }: { product: Produ
                   </>
                 ) : (
                   <>
-                    <ShoppingBag className="h-5 w-5 text-[#C9A66B]" /> Add to Cart — ${product.price * quantity}
+                    <ShoppingBag className="h-5 w-5 text-[#C9A66B]" /> Add to Cart — ₹{product.price * quantity}
                   </>
                 )}
               </button>
@@ -379,7 +379,7 @@ export function ProductDetailView({ product, relatedProducts }: { product: Produ
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-xs font-bold text-[#2E5E4E] truncate">{product.name}</p>
-                  <p className="text-xs font-bold text-[#C9A66B]">${product.price}</p>
+                  <p className="text-xs font-bold text-[#C9A66B]">₹{product.price}</p>
                 </div>
               </div>
 
@@ -399,7 +399,7 @@ export function ProductDetailView({ product, relatedProducts }: { product: Produ
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-xs font-bold text-[#2E5E4E] truncate">{bundleItem.name}</p>
-                        <p className="text-xs font-bold text-[#C9A66B]">${bundleItem.price}</p>
+                        <p className="text-xs font-bold text-[#C9A66B]">₹{bundleItem.price}</p>
                         <span className="text-[10px] text-emerald-800 font-bold">{isSelected ? "Included" : "Click to add"}</span>
                       </div>
                     </button>
@@ -411,13 +411,13 @@ export function ProductDetailView({ product, relatedProducts }: { product: Produ
             <div className="flex flex-col gap-3 rounded-2xl border border-[#2E5E4E]/10 bg-[#F6F1E9] p-6 lg:ml-auto lg:min-w-[280px]">
               <div className="flex justify-between text-xs text-[#6e6258]">
                 <span>Items Selected ({selectedBundleItems.length})</span>
-                <span className="line-through">${rawBundlePrice}</span>
+                <span className="line-through">₹{rawBundlePrice}</span>
               </div>
               <div className="flex justify-between items-baseline">
                 <span className="text-sm font-bold text-[#2E5E4E]">Bundle Price:</span>
-                <span className="text-2xl font-extrabold text-[#2E5E4E]">${bundleDiscountPrice}</span>
+                <span className="text-2xl font-extrabold text-[#2E5E4E]">₹{bundleDiscountPrice}</span>
               </div>
-              <span className="text-[11px] font-bold text-emerald-800">You Save 15% (${rawBundlePrice - bundleDiscountPrice})</span>
+              <span className="text-[11px] font-bold text-emerald-800">You Save 15% (₹{rawBundlePrice - bundleDiscountPrice})</span>
 
               <button
                 onClick={handleAddBundleToCart}
@@ -431,7 +431,7 @@ export function ProductDetailView({ product, relatedProducts }: { product: Produ
                   </>
                 ) : (
                   <>
-                    <ShoppingBag className="h-4 w-4 text-[#C9A66B]" /> Add Bundle to Cart (${bundleDiscountPrice})
+                    <ShoppingBag className="h-4 w-4 text-[#C9A66B]" /> Add Bundle to Cart (₹{bundleDiscountPrice})
                   </>
                 )}
               </button>
@@ -470,7 +470,7 @@ export function ProductDetailView({ product, relatedProducts }: { product: Produ
             </div>
             <div>
               <p className="text-xs font-bold text-[#FAF8F3] line-clamp-1">{product.name}</p>
-              <p className="text-[11px] text-[#C9A66B] font-semibold">${product.price} • {product.size}</p>
+              <p className="text-[11px] text-[#C9A66B] font-semibold">₹{product.price} • {product.size}</p>
             </div>
           </div>
 
@@ -478,7 +478,7 @@ export function ProductDetailView({ product, relatedProducts }: { product: Produ
             onClick={handleAddToCart}
             className="rounded-full bg-[#C9A66B] px-6 py-2.5 text-xs font-bold uppercase tracking-widest text-[#2E5E4E] hover:bg-white transition flex items-center gap-2 shadow-md"
           >
-            <ShoppingBag className="h-4 w-4" /> Add to Cart — ${product.price * quantity}
+            <ShoppingBag className="h-4 w-4" /> Add to Cart — ₹{product.price * quantity}
           </button>
         </div>
       </div>

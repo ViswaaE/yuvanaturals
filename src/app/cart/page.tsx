@@ -76,7 +76,7 @@ export default function CartPage() {
                           {product.category} • {product.size}
                         </span>
                         <h3 className="text-base font-bold text-[#2E5E4E]">{product.name}</h3>
-                        <p className="text-xs text-[#6e6258] mt-1 font-semibold">${product.price} each</p>
+                        <p className="text-xs text-[#6e6258] mt-1 font-semibold">₹{product.price} each</p>
                       </div>
                     </div>
 
@@ -98,7 +98,7 @@ export default function CartPage() {
                         </button>
                       </div>
 
-                      <span className="text-lg font-bold text-[#2E5E4E]">${product.price * qty}</span>
+                      <span className="text-lg font-bold text-[#2E5E4E]">₹{product.price * qty}</span>
 
                       <button className="text-[#9d6d4f] hover:text-red-600 transition" aria-label="Remove product">
                         <Trash2 className="h-4 w-4" />
@@ -133,7 +133,7 @@ export default function CartPage() {
 
               {couponApplied && (
                 <p className="mt-2 text-xs font-semibold text-emerald-700 flex items-center gap-1">
-                  <Check className="h-4 w-4" /> Promo Code YUVA15 Applied! (15% Off Saved ${discountAmount})
+                  <Check className="h-4 w-4" /> Promo Code YUVA15 Applied! (15% Off Saved ₹{discountAmount})
                 </p>
               )}
             </div>
@@ -147,13 +147,13 @@ export default function CartPage() {
               <div className="mt-6 space-y-4 text-xs text-[#FAF8F3]/80">
                 <div className="flex justify-between">
                   <span>Bag Subtotal</span>
-                  <span className="font-bold text-[#FAF8F3]">${rawSubtotal}</span>
+                  <span className="font-bold text-[#FAF8F3]">₹{rawSubtotal}</span>
                 </div>
 
                 {couponApplied && (
                   <div className="flex justify-between text-emerald-300">
                     <span>Promo Discount (15%)</span>
-                    <span>-${discountAmount}</span>
+                    <span>-₹{discountAmount}</span>
                   </div>
                 )}
 
@@ -169,7 +169,7 @@ export default function CartPage() {
 
                 <div className="flex justify-between border-t border-white/10 pt-4 text-lg font-bold text-[#FAF8F3]">
                   <span>Total Due</span>
-                  <span className="text-2xl font-extrabold text-[#C9A66B]">${finalSubtotal}</span>
+                  <span className="text-2xl font-extrabold text-[#C9A66B]">₹{finalSubtotal}</span>
                 </div>
               </div>
             </div>
