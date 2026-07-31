@@ -13,7 +13,7 @@ interface CategoryCardProps {
 export function CategoryCard({ category }: CategoryCardProps) {
   return (
     <Link
-      href="/shop"
+      href={`/shop?category=${encodeURIComponent(category.title)}`}
       className="group relative flex flex-col overflow-hidden rounded-[2.25rem] border border-[#2E5E4E]/10 bg-white p-4 shadow-[0_20px_50px_rgba(46,94,78,0.06)] transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_30px_70px_rgba(46,94,78,0.14)]"
     >
       <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[1.75rem] bg-[#F6F1E9]">

@@ -7,6 +7,7 @@ import { PageShell } from "@/components/page-shell";
 import { SectionHeading } from "@/components/section-heading";
 import { products } from "@/constants/products";
 import { CheckCircle2, CreditCard, Lock, ShieldCheck, Sparkles, Truck, ArrowLeft } from "lucide-react";
+import { YuvaLogo } from "@/components/yuva-logo";
 
 export default function CheckoutPage() {
   const checkoutItems = [products[0], products[5]]; // Manjishtha Soap + Flora Serum
@@ -36,7 +37,10 @@ export default function CheckoutPage() {
           </span>
         </div>
 
-        <section className="rounded-[2.5rem] border border-[#C9A66B]/20 bg-[#F6F1E9] p-8 shadow-[0_30px_90px_rgba(46,94,78,0.06)] sm:p-10">
+        <section className="rounded-[2.5rem] border border-[#C9A66B]/20 bg-[#F6F1E9] p-8 shadow-[0_30px_90px_rgba(46,94,78,0.06)] sm:p-10 text-center">
+          <div className="mb-4 flex justify-center">
+            <YuvaLogo variant="hero" showTagline={true} />
+          </div>
           <SectionHeading
             eyebrow="Express Checkout"
             title="Complete Your Botanical Order"

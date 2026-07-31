@@ -1,4 +1,4 @@
-import { notFound } from "next";
+import { redirect } from "next/navigation";
 import { PageShell } from "@/components/page-shell";
 import { ProductDetailView } from "@/components/product-detail-view";
 import { getProductBySlug, products } from "@/constants/products";
@@ -14,7 +14,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
   const product = getProductBySlug(slug);
 
   if (!product) {
-    notFound();
+    redirect("/not-found");
   }
 
   const relatedProducts = products

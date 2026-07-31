@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { PageShell } from "@/components/page-shell";
 import { SectionHeading } from "@/components/section-heading";
-import { Sparkles, Leaf, ShieldCheck, Heart, ArrowRight } from "lucide-react";
+import { YuvaLogo } from "@/components/yuva-logo";
 
 export default function AboutPage() {
   return (
@@ -11,6 +11,9 @@ export default function AboutPage() {
         {/* Banner Hero */}
         <section className="rounded-[2.5rem] border border-[#C9A66B]/20 bg-[#F6F1E9] p-8 shadow-[0_30px_90px_rgba(46,94,78,0.06)] sm:p-12 lg:p-16">
           <div className="mx-auto max-w-3xl text-center">
+            <div className="mb-4 flex justify-center">
+              <YuvaLogo variant="hero" showTagline={true} />
+            </div>
             <span className="inline-flex items-center gap-2 rounded-full border border-[#2E5E4E]/15 bg-white px-4 py-1.5 text-xs font-bold uppercase tracking-[0.3em] text-[#C9A66B]">
               <Sparkles className="h-3.5 w-3.5" /> Our Botanical Heritage
             </span>

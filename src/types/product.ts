@@ -1,11 +1,12 @@
 export type ProductCategory =
   | "Bath Bars"
-  | "Luxury Herbal Soaps"
+  | "Herbal Soaps"
+  | "Premium Shampoos"
   | "Organic Skincare"
-  | "Natural Serums"
-  | "Gift Collections"
+  | "Lip Care"
   | "Best Sellers"
-  | "New Arrivals";
+  | "New Arrivals"
+  | "Gift Collections";
 
 export interface Review {
   id: string;

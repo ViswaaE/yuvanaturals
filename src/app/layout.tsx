@@ -17,7 +17,11 @@ const sansFont = Plus_Jakarta_Sans({
 export const metadata: Metadata = {
   title: "YUVA Naturals | Luxury Handmade Botanical Skincare",
   description: "Editorial luxury skincare and artisanal bath bars crafted with goat milk, active botanicals, and high-potency flora elixirs.",
-  keywords: ["YUVA Naturals", "luxury skincare", "goat milk soap", "botanical elixirs", "Aesop style skincare"],
+  icons: {
+    icon: "/api/logo",
+    shortcut: "/api/logo",
+    apple: "/api/logo",
+  },
   openGraph: {
     title: "YUVA Naturals | Luxury Handmade Botanical Skincare",
     description: "Editorial luxury skincare and artisanal bath bars crafted with goat milk, active botanicals, and high-potency flora elixirs.",
