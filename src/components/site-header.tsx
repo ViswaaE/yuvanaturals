@@ -10,118 +10,158 @@ export function SiteHeader() {
   const { totalItemsCount } = useCart();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchOpen, setSearchOpen] = useState(false);
 
-  const mainCategories = [
+  const mainLeftLinks = [
+    { label: "Shop", href: "/shop" },
     { label: "Bath Bars", href: "/shop?category=Bath Bars" },
-    { label: "Herbal Soaps", href: "/shop?category=Herbal Soaps" },
-    { label: "Premium Shampoos", href: "/shop?category=Premium Shampoos" },
-    { label: "Organic Skincare", href: "/shop?category=Organic Skincare" },
-    { label: "Lip Care", href: "/shop?category=Lip Care" },
+    { label: "Shampoos", href: "/shop?category=Premium Shampoos" },
+    { label: "Skincare", href: "/shop?category=Organic Skincare" },
+    { label: "Cookies", href: "/cookies" },
+  ];
+
+  const subNavLinks = [
+    { label: "BATH BARS", href: "/shop?category=Bath Bars" },
+    { label: "HERBAL SOAPS", href: "/shop?category=Herbal Soaps" },
+    { label: "PREMIUM SHAMPOOS", href: "/shop?category=Premium Shampoos" },
+    { label: "ORGANIC SKINCARE", href: "/shop?category=Organic Skincare" },
+    { label: "LIP CARE", href: "/shop?category=Lip Care" },
+    { label: "COOKIES", href: "/cookies" },
+    { label: "GIFT COLLECTIONS", href: "/shop?collection=Gift Collections" },
   ];
 
   return (
-    <header className="sticky top-0 z-50 border-b border-[#2E5E4E]/10 bg-[#FAF8F3]/95 backdrop-blur-md">
-      {/* Top Announcement Banner */}
-      <div className="bg-[#2E5E4E] px-4 py-1.5 text-center text-[11px] font-medium tracking-wider text-[#FAF8F3]">
-        <span className="text-[#C9A66B] font-bold">FREE SHIPPING</span> ON ALL ORDERS OVER ₹500 • HANDCRAFTED BOTANICAL CARE
+    <header className="sticky top-0 z-50 bg-[#FCFAF5]/98 border-b border-[#173F32]/10 shadow-xs backdrop-blur-md">
+      {/* 1. Announcement Bar (~32px) */}
+      <div className="bg-[#0D2F25] h-[32px] px-4 flex items-center justify-center text-[11px] font-medium tracking-[0.16em] uppercase text-[#FCFAF5]">
+        <span>FREE SHIPPING ON ORDERS ABOVE ₹5000 &nbsp;&bull;&nbsp; <span className="text-[#C9A45C]">HANDCRAFTED BOTANICAL CARE</span></span>
       </div>
 
-      {/* Main Header Bar - 90-96px Height with Generous Spacing & Vertically Centered Logo */}
-      <div className="mx-auto flex max-w-7xl min-h-[96px] items-center justify-between px-4 sm:px-6 lg:px-8 py-2">
+      {/* 2. Main Navigation Row (~76px desktop, 60px mobile) */}
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-[60px] lg:h-[76px] flex items-center justify-between">
         {/* Mobile Hamburger Menu Toggle */}
         <div className="flex items-center lg:hidden">
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="rounded-full p-2 text-[#2E5E4E] hover:bg-[#2E5E4E]/5 transition"
+            className="p-1 text-[#173F32] hover:text-[#C9A45C] transition"
             aria-label="Toggle menu"
           >
-            {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </div>
 
-        {/* Left Nav Links - Aligned around the Logo */}
-        <nav className="hidden items-center gap-7 text-xs font-bold uppercase tracking-[0.15em] text-[#2E5E4E] lg:flex flex-1 justify-start">
-          <Link href="/shop" className="transition hover:text-[#C9A66B]">Shop All</Link>
-          <Link href="/shop?category=Bath Bars" className="transition hover:text-[#C9A66B]">Bath Bars</Link>
-          <Link href="/shop?category=Herbal Soaps" className="transition hover:text-[#C9A66B]">Soaps</Link>
+        {/* Left Nav (Desktop) */}
+        <nav className="hidden lg:flex items-center gap-6 text-[12px] font-semibold uppercase tracking-[0.12em] text-[#173F32] flex-1 justify-start">
+          {mainLeftLinks.map((link) => (
+            <Link key={link.label} href={link.href} className="transition hover:text-[#C9A45C] py-1">
+              {link.label}
+            </Link>
+          ))}
         </nav>
 
-        {/* Center Official Brand Logo - Primary Visual Focus */}
-        <div className="flex items-center justify-center px-4 sm:px-8 py-1 flex-shrink-0">
+        {/* Center Logo - Clean, No white box container, mix-blend-multiply */}
+        <div className="flex items-center justify-center px-2 py-0 flex-shrink-0">
           <YuvaLogo variant="header" priority={true} />
         </div>
 
-        {/* Right Nav Links & Utility Controls */}
-        <div className="flex items-center gap-6 flex-1 justify-end">
-          <nav className="hidden items-center gap-7 text-xs font-bold uppercase tracking-[0.15em] text-[#2E5E4E] xl:flex">
-            <Link href="/shop?category=Premium Shampoos" className="transition hover:text-[#C9A66B]">Shampoos</Link>
-            <Link href="/shop?category=Organic Skincare" className="transition hover:text-[#C9A66B]">Skincare</Link>
-            <Link href="/shop?collection=Gift Collections" className="text-[#C9A66B] font-bold transition hover:text-[#2E5E4E]">Gifts</Link>
-          </nav>
+        {/* Right Controls (Desktop & Mobile) */}
+        <div className="flex items-center gap-4 lg:gap-6 flex-1 justify-end">
+          {/* Search Trigger */}
+          <div className="relative hidden md:block">
+            <button
+              onClick={() => setSearchOpen(!searchOpen)}
+              className="text-[#173F32] hover:text-[#C9A45C] transition flex items-center gap-1.5 text-[12px] uppercase tracking-[0.12em] font-semibold"
+              aria-label="Search"
+            >
+              <Search className="h-3.5 w-3.5" />
+              <span>SEARCH</span>
+            </button>
 
-          {/* Search, Wishlist & Cart Utilities */}
-          <div className="flex items-center gap-3">
-            <form action="/search" method="GET" className="relative hidden md:block w-40 lg:w-48">
-              <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#9d6d4f]" />
-              <input
-                type="text"
-                name="q"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search..."
-                className="w-full rounded-full border border-[#2E5E4E]/15 bg-[#F6F1E9] py-1.5 pl-8 pr-3 text-xs text-[#2E5E4E] placeholder:text-[#6e6258] outline-none focus:border-[#C9A66B]"
-              />
-            </form>
-
-            <Link href="/wishlist" aria-label="Wishlist" className="relative p-2 text-[#2E5E4E] hover:text-[#C9A66B] transition">
-              <Heart className="h-5 w-5" />
-              <span className="absolute top-0 right-0 flex h-4 w-4 items-center justify-center rounded-full bg-[#2E5E4E] text-[9px] font-bold text-white">
-                3
-              </span>
-            </Link>
-
-            <Link href="/cart">
-              <button className="flex items-center gap-1.5 rounded-full bg-[#2E5E4E] px-4 py-2 text-xs font-bold text-[#FAF8F3] shadow-sm transition hover:bg-[#C9A66B] hover:text-[#2E5E4E]">
-                <ShoppingBag className="h-4 w-4 text-[#C9A66B]" />
-                <span className="hidden sm:inline text-[11px] uppercase tracking-wider">Cart</span>
-                <span className="rounded-full bg-white/20 px-1.5 py-0.5 text-[10px]">{totalItemsCount}</span>
-              </button>
-            </Link>
+            {searchOpen && (
+              <form action="/search" method="GET" className="absolute right-0 top-full mt-2 w-64 bg-[#FCFAF5] p-2 border border-[#173F32]/15 shadow-xl rounded-md z-50">
+                <input
+                  type="text"
+                  name="q"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search botanical products..."
+                  autoFocus
+                  className="w-full bg-[#F7F2E8] px-3 py-1.5 text-xs text-[#20251F] outline-none border border-[#173F32]/20 focus:border-[#C9A45C] rounded-sm"
+                />
+              </form>
+            )}
           </div>
+
+          {/* Wishlist */}
+          <Link
+            href="/wishlist"
+            aria-label="Wishlist"
+            className="text-[#173F32] hover:text-[#C9A45C] transition flex items-center gap-1.5 text-[12px] uppercase tracking-[0.12em] font-semibold"
+          >
+            <Heart className="h-3.5 w-3.5" />
+            <span className="hidden xl:inline">WISHLIST</span>
+          </Link>
+
+          {/* Account */}
+          <Link
+            href="/shop"
+            aria-label="Account"
+            className="hidden md:flex text-[#173F32] hover:text-[#C9A45C] transition items-center gap-1.5 text-[12px] uppercase tracking-[0.12em] font-semibold"
+          >
+            <User className="h-3.5 w-3.5" />
+            <span className="hidden xl:inline">ACCOUNT</span>
+          </Link>
+
+          {/* Cart Button */}
+          <Link href="/cart">
+            <button className="flex items-center gap-1.5 rounded-full bg-[#173F32] px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#FCFAF5] transition hover:bg-[#0D2F25]">
+              <ShoppingBag className="h-3.5 w-3.5 text-[#C9A45C]" />
+              <span className="hidden sm:inline">CART</span>
+              <span className="ml-0.5 rounded-full bg-[#C9A45C] px-1.5 py-0.2 text-[10px] font-bold text-[#0D2F25]">
+                {totalItemsCount}
+              </span>
+            </button>
+          </Link>
         </div>
       </div>
 
-      {/* Secondary Category Subnav */}
-      <div className="hidden border-t border-[#2E5E4E]/5 bg-[#F6F1E9]/80 lg:block py-2">
-        <div className="mx-auto flex max-w-7xl items-center justify-center gap-8 px-4 text-[11px] font-bold uppercase tracking-widest text-[#2E5E4E]">
-          <Link href="/shop" className="transition hover:text-[#C9A66B]">Shop All</Link>
-          <Link href="/shop?collection=Best Sellers" className="transition hover:text-[#C9A66B]">Best Sellers</Link>
-          <Link href="/shop?category=Bath Bars" className="transition hover:text-[#C9A66B]">Bath Bars</Link>
-          <Link href="/shop?category=Herbal Soaps" className="transition hover:text-[#C9A66B]">Herbal Soaps</Link>
-          <Link href="/shop?category=Premium Shampoos" className="transition hover:text-[#C9A66B]">Premium Shampoos</Link>
-          <Link href="/shop?category=Organic Skincare" className="transition hover:text-[#C9A66B]">Organic Skincare</Link>
-          <Link href="/shop?category=Lip Care" className="transition hover:text-[#C9A66B]">Lip Care</Link>
-          <Link href="/shop?collection=Gift Collections" className="text-[#C9A66B] font-bold transition hover:text-[#2E5E4E]">Gift Collections</Link>
+      {/* 3. Secondary Category Navigation Row (~42px desktop only) */}
+      <div className="hidden lg:block border-y border-[#173F32]/10 bg-[#F7F2E8]/60 h-[42px]">
+        <div className="mx-auto flex max-w-7xl h-full items-center justify-center gap-6 px-4 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#173F32]">
+          {subNavLinks.map((item) => (
+            <Link
+              key={item.label}
+              href={item.href}
+              className={`transition hover:text-[#C9A45C] ${item.label === "COOKIES" ? "text-[#C9A45C] font-bold" : ""}`}
+            >
+              {item.label}
+            </Link>
+          ))}
         </div>
       </div>
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="border-t border-[#2E5E4E]/10 bg-[#FAF8F3] px-6 py-4 lg:hidden animate-in fade-in duration-200">
-          <nav className="flex flex-col gap-3 text-xs font-bold uppercase tracking-widest text-[#2E5E4E]">
+        <div className="border-t border-[#173F32]/10 bg-[#FCFAF5] px-6 py-5 lg:hidden animate-in fade-in duration-200 shadow-xl">
+          <nav className="flex flex-col gap-3 text-xs font-semibold uppercase tracking-[0.15em] text-[#173F32]">
             <Link href="/" onClick={() => setMobileMenuOpen(false)}>Home</Link>
-            <Link href="/shop" onClick={() => setMobileMenuOpen(false)}>Shop All Products</Link>
-            {mainCategories.map((cat) => (
-              <Link key={cat.label} href={cat.href} onClick={() => setMobileMenuOpen(false)} className="pl-3 text-[#2E5E4E]/80">
-                • {cat.label}
-              </Link>
-            ))}
-            <Link href="/about" onClick={() => setMobileMenuOpen(false)}>About Yuva Naturals</Link>
-            <Link href="/contact" onClick={() => setMobileMenuOpen(false)}>Contact Us</Link>
-            <Link href="/cart" onClick={() => setMobileMenuOpen(false)}>Shopping Cart</Link>
+            <Link href="/shop" onClick={() => setMobileMenuOpen(false)}>Shop All</Link>
+            <Link href="/cookies" onClick={() => setMobileMenuOpen(false)} className="text-[#C9A45C] font-bold">• Wholesome Cookies</Link>
+            <Link href="/shop?category=Bath Bars" onClick={() => setMobileMenuOpen(false)}>• Bath Bars</Link>
+            <Link href="/shop?category=Herbal Soaps" onClick={() => setMobileMenuOpen(false)}>• Herbal Soaps</Link>
+            <Link href="/shop?category=Premium Shampoos" onClick={() => setMobileMenuOpen(false)}>• Premium Shampoos</Link>
+            <Link href="/shop?category=Organic Skincare" onClick={() => setMobileMenuOpen(false)}>• Organic Skincare</Link>
+            <Link href="/shop?category=Lip Care" onClick={() => setMobileMenuOpen(false)}>• Lip Care</Link>
+            <Link href="/shop?collection=Gift Collections" onClick={() => setMobileMenuOpen(false)}>• Gift Collections</Link>
+            <div className="pt-3 border-t border-[#173F32]/10 flex flex-col gap-2">
+              <Link href="/about" onClick={() => setMobileMenuOpen(false)} className="text-[#6E716A]">Our Story</Link>
+              <Link href="/contact" onClick={() => setMobileMenuOpen(false)} className="text-[#6E716A]">Contact</Link>
+              <Link href="/cart" onClick={() => setMobileMenuOpen(false)} className="text-[#173F32] font-bold">Cart ({totalItemsCount})</Link>
+            </div>
           </nav>
         </div>
       )}
     </header>
   );
 }
+

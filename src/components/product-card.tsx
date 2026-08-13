@@ -7,7 +7,10 @@ import { Eye, Heart, ShoppingBag, Star, Check } from "lucide-react";
 import type { Product } from "@/types/product";
 import { QuickViewModal } from "@/components/quick-view-modal";
 
+import { useCart } from "@/context/cart-context";
+
 export function ProductCard({ product }: { product: Product }) {
+  const { addToCart } = useCart();
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [quickViewOpen, setQuickViewOpen] = useState(false);
   const [added, setAdded] = useState(false);
@@ -15,6 +18,7 @@ export function ProductCard({ product }: { product: Product }) {
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    addToCart(product, 1);
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   };

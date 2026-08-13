@@ -4,6 +4,7 @@ export type ProductCategory =
   | "Premium Shampoos"
   | "Organic Skincare"
   | "Lip Care"
+  | "Cookies"
   | "Best Sellers"
   | "New Arrivals"
   | "Gift Collections";

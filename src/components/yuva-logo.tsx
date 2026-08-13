@@ -23,10 +23,10 @@ export function YuvaLogo({
   // Footer: 120px wide, height auto object-contain
   // Hero / Large: 100px - 140px high
   const variantStyles = {
-    header: "h-[48px] md:h-[60px] lg:h-[72px] w-auto object-contain",
-    footer: "w-[120px] h-auto object-contain",
-    hero: "h-[90px] sm:h-[110px] lg:h-[130px] w-auto object-contain",
-    large: "h-[100px] sm:h-[130px] lg:h-[150px] w-auto object-contain",
+    header: "w-[110px] sm:w-[125px] md:w-[140px] max-h-[52px] h-auto object-contain mix-blend-multiply",
+    footer: "w-[130px] md:w-[150px] max-h-[50px] h-auto object-contain mix-blend-multiply",
+    hero: "w-[160px] sm:w-[200px] h-auto object-contain mix-blend-multiply",
+    large: "w-[180px] sm:w-[230px] h-auto object-contain mix-blend-multiply",
   };
 
   return (

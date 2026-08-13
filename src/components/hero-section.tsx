@@ -1,94 +1,88 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Sparkles, Star } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { YuvaLogo } from "./yuva-logo";
+import { ArrowRight, Check } from "lucide-react";
 
 export function HeroSection() {
   return (
-    <section className="relative overflow-hidden rounded-[2.5rem] border border-[#C9A66B]/20 bg-[#F6F1E9] p-6 shadow-[0_30px_90px_rgba(46,94,78,0.06)] sm:p-10 lg:p-14">
-      {/* Decorative Botanical Accents */}
-      <div className="pointer-events-none absolute -left-6 top-10 h-32 w-32 animate-float opacity-80 z-10">
-        <svg viewBox="0 0 100 100" className="h-full w-full fill-[#7A9474]">
-          <path d="M50 10 Q60 30 50 50 Q40 70 50 90 M45 20 Q30 15 40 30 M55 35 Q70 30 60 45 M45 50 Q30 45 40 60 M55 65 Q70 60 60 75" stroke="#2E5E4E" strokeWidth="3" fill="none" />
-          <circle cx="35" cy="18" r="4" fill="#C9A66B" />
-          <circle cx="65" cy="32" r="4" fill="#7A9474" />
-          <circle cx="35" cy="48" r="4" fill="#C9A66B" />
-        </svg>
-      </div>
-
-      <div className="grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
-        {/* Text Content */}
-        <div className="flex flex-col items-center text-center lg:items-start lg:text-left z-20">
-          <div className="mb-4">
-            <YuvaLogo variant="hero" showTagline={true} />
-          </div>
-
-          <span className="inline-flex items-center gap-2 rounded-full border border-[#2E5E4E]/15 bg-white/80 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.3em] text-[#C9A66B] backdrop-blur-sm">
-            <Sparkles className="h-3.5 w-3.5" /> 100% Organic & Handcrafted
+    <section className="relative overflow-hidden bg-[#F7F2E8] border border-[#173F32]/10 rounded-3xl p-6 sm:p-10 lg:p-14 shadow-sm">
+      <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
+        {/* Left Column: Text & CTAs */}
+        <div className="flex flex-col items-start text-left">
+          {/* Eyebrow */}
+          <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#C9A45C]">
+            BOTANICAL CARE &bull; HANDCRAFTED IN INDIA
           </span>
 
-          <h1 className="mt-4 max-w-2xl text-4xl font-bold leading-tight text-[#2E5E4E] sm:text-5xl lg:text-6xl font-serif">
-            Nature&apos;s Touch,<br className="hidden sm:inline" /> Radiant Glow.
+          {/* Headline */}
+          <h1 className="mt-4 text-4xl sm:text-5xl lg:text-6xl font-serif font-semibold text-[#173F32] leading-[1.15]">
+            Nature&apos;s Touch,<br />
+            <span className="italic font-normal text-[#0D2F25]">Radiant Glow.</span>
           </h1>
 
-          <p className="mt-4 max-w-xl text-base leading-relaxed text-[#1F332B]/80 sm:text-lg">
-            Discover artisanal pure goat milk bath bars, botanical hair shampoos, and antioxidant skin gels formulated with pure ingredients and traditional Ayurvedic herbal wisdom.
+          {/* Supporting Text */}
+          <p className="mt-6 text-sm sm:text-base leading-relaxed text-[#20251F]/80 max-w-xl">
+            Discover handcrafted bath bars, botanical hair care, nourishing skincare and wholesome millet cookies, made with carefully selected ingredients.
           </p>
 
-          <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center">
-            <Link href="/shop">
-              <Button className="gap-2 px-8 py-6 text-xs font-bold uppercase tracking-widest bg-[#2E5E4E] text-[#FAF8F3] hover:bg-[#C9A66B] hover:text-[#2E5E4E] rounded-full shadow-lg transition duration-300">
-                Explore Collection <ArrowRight className="h-4 w-4" />
-              </Button>
+          {/* Action Buttons */}
+          <div className="mt-8 flex flex-wrap items-center gap-4">
+            <Link
+              href="/shop"
+              className="inline-flex items-center gap-2 rounded-full bg-[#173F32] px-7 py-3.5 text-xs font-semibold uppercase tracking-[0.18em] text-[#FCFAF5] transition hover:bg-[#0D2F25] shadow-sm"
+            >
+              SHOP COLLECTION &rarr;
             </Link>
-            <Link href="/about">
-              <Button variant="outline" className="px-7 py-6 text-xs font-bold uppercase tracking-widest border-[#2E5E4E]/20 text-[#2E5E4E] hover:bg-white rounded-full">
-                Our Herbal Story
-              </Button>
+            <Link
+              href="/about"
+              className="inline-flex items-center gap-2 rounded-full border border-[#173F32]/25 bg-transparent px-7 py-3.5 text-xs font-semibold uppercase tracking-[0.18em] text-[#173F32] transition hover:bg-[#FCFAF5]"
+            >
+              OUR STORY
             </Link>
           </div>
 
-          {/* Ratings */}
-          <div className="mt-10 flex items-center gap-4 border-t border-[#2E5E4E]/10 pt-6">
-            <div className="flex items-center gap-1 text-[#C9A66B]">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} className="h-4 w-4 fill-current" />
-              ))}
+          {/* Subtle Trust Points */}
+          <div className="mt-12 flex flex-wrap items-center gap-6 border-t border-[#173F32]/10 pt-6 text-xs text-[#6E716A]">
+            <div className="flex items-center gap-2">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#C9A45C]"></span>
+              <span className="font-medium text-[#20251F]">Handcrafted</span>
             </div>
-            <p className="text-xs font-semibold text-[#1F332B]/80">
-              <span className="font-bold text-[#2E5E4E]">4.9 / 5.0</span> (1,500+ Verified Clean Beauty Reviews)
-            </p>
+            <div className="flex items-center gap-2">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#C9A45C]"></span>
+              <span className="font-medium text-[#20251F]">Botanical Ingredients</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#C9A45C]"></span>
+              <span className="font-medium text-[#20251F]">Made with Care</span>
+            </div>
           </div>
         </div>
 
-        {/* Hero Visual Container */}
-        <div className="relative overflow-hidden rounded-[2.25rem] bg-white p-4 shadow-xl border border-[#C9A66B]/20">
-          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[1.75rem] bg-[#FAF8F3]">
-            <Image
-              src="/api/images/goat_milk_lavender_bar"
-              alt="Yuva Naturals Goat Milk & Lavender Bath Bar"
-              fill
-              priority
-              className="object-cover transition-transform duration-700 hover:scale-105"
-            />
-
-            {/* Overlaid Floating Product Card */}
-            <div className="absolute inset-x-4 bottom-4 rounded-2xl bg-white/90 p-4 backdrop-blur-md border border-white/50 shadow-lg flex items-center justify-between">
-              <div>
-                <span className="text-[10px] font-bold uppercase tracking-widest text-[#C9A66B]">Signature Pure Goat Milk</span>
-                <p className="text-xs font-bold text-[#2E5E4E]">Pure Goat Milk & Lavender Bath Bar</p>
-              </div>
-              <Link
-                href="/shop?slug=premium-pure-goat-milk-lavender-bath-bar"
-                className="rounded-full bg-[#2E5E4E] px-4 py-2 text-[11px] font-bold uppercase tracking-wider text-[#FAF8F3] hover:bg-[#C9A66B] hover:text-[#2E5E4E] transition"
-              >
-                View — ₹180
-              </Link>
+        {/* Right Column: Editorial Photography */}
+        <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-[#173F32]/10 shadow-lg bg-[#FCFAF5]">
+          <Image
+            src="/api/images/hero_goat_milk_lavender"
+            alt="YUVA Naturals Pure Goat Milk & Lavender Bath Bar"
+            fill
+            priority
+            className="object-cover transition-transform duration-700 hover:scale-105"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0D2F25]/40 via-transparent to-transparent pointer-events-none"></div>
+          
+          <div className="absolute bottom-4 left-4 right-4 bg-[#FCFAF5]/90 backdrop-blur-md p-4 rounded-xl border border-[#173F32]/10 flex items-center justify-between">
+            <div>
+              <span className="text-[10px] uppercase tracking-widest font-bold text-[#C9A45C]">FEATURED RITUAL</span>
+              <p className="text-xs font-serif font-bold text-[#173F32]">Pure Goat Milk & Lavender Bath Bar</p>
             </div>
+            <Link
+              href="/product/premium-pure-goat-milk-lavender-bath-bar"
+              className="text-[11px] font-semibold uppercase tracking-wider text-[#173F32] hover:text-[#C9A45C] transition"
+            >
+              Explore &rarr;
+            </Link>
           </div>
         </div>
       </div>
     </section>
   );
 }
+
