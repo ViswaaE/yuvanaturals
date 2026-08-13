@@ -6,12 +6,15 @@ import Link from "next/link";
 import { X, Star, ShoppingBag, Heart, Check, ArrowRight, Shield } from "lucide-react";
 import type { Product } from "@/types/product";
 
+import { useCart } from "@/context/cart-context";
+
 interface QuickViewModalProps {
   product: Product | null;
   onClose: () => void;
 }
 
 export function QuickViewModal({ product, onClose }: QuickViewModalProps) {
+  const { addToCart } = useCart();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
@@ -22,8 +25,11 @@ export function QuickViewModal({ product, onClose }: QuickViewModalProps) {
   const currentImage = selectedImage || product.image;
 
   const handleAddToCart = () => {
-    setAdded(true);
-    setTimeout(() => setAdded(false), 2500);
+    if (product) {
+      addToCart(product, quantity);
+      setAdded(true);
+      setTimeout(() => setAdded(false), 2500);
+    }
   };
 
   return (

@@ -8,7 +8,10 @@ import type { Product } from "@/types/product";
 import { ProductCard } from "@/components/product-card";
 import { products } from "@/constants/products";
 
+import { useCart } from "@/context/cart-context";
+
 export function ProductDetailView({ product, relatedProducts }: { product: Product; relatedProducts: Product[] }) {
+  const { addToCart } = useCart();
   const [selectedImg, setSelectedImg] = useState<string>(product.image);
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
@@ -43,11 +46,13 @@ export function ProductDetailView({ product, relatedProducts }: { product: Produ
   const bundleDiscountPrice = Math.round(rawBundlePrice * 0.85);
 
   const handleAddToCart = () => {
+    addToCart(product, quantity);
     setAdded(true);
     setTimeout(() => setAdded(false), 2500);
   };
 
   const handleAddBundleToCart = () => {
+    selectedBundleItems.forEach((item) => addToCart(item, 1));
     setBundleAdded(true);
     setTimeout(() => setBundleAdded(false), 2500);
   };
