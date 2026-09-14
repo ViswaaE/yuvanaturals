@@ -69,29 +69,29 @@ function ShopContent() {
   });
 
   return (
-    <main className="space-y-12 pb-16">
-      {/* Header Hero Banner */}
-      <section className="rounded-[2.5rem] border border-[#C9A66B]/20 bg-[#F6F1E9] p-8 shadow-[0_30px_90px_rgba(46,94,78,0.06)] sm:p-10 text-center">
-        <span className="inline-flex items-center gap-2 rounded-full border border-[#2E5E4E]/15 bg-white px-4 py-1.5 text-xs font-bold uppercase tracking-[0.3em] text-[#C9A66B]">
-          <Sparkles className="h-3.5 w-3.5" /> Yuva Botanical Apothecary
+    <main className="space-y-8 pb-16 pt-4">
+      {/* Header Banner */}
+      <section className="rounded-2xl border border-stone-200 bg-[#F7F2E8] p-6 sm:p-8 text-center space-y-3">
+        <span className="text-[11px] font-semibold text-[#C9A45C] uppercase tracking-wider">
+          BOTANICAL CARE &bull; HANDCRAFTED IN INDIA
         </span>
-        <h1 className="mt-4 text-4xl font-bold text-[#2E5E4E] sm:text-5xl font-serif">
-          Shop Our Official Collection
+        <h1 className="text-3xl sm:text-4xl font-bold text-[#173F32] font-serif">
+          Shop Our Natural Collection
         </h1>
-        <p className="mt-3 max-w-xl mx-auto text-xs sm:text-sm text-[#1F332B]/80 leading-relaxed">
-          Artisanal pure goat milk bath bars, herbal soaps, root-strengthening shampoos, and natural organic skincare.
+        <p className="max-w-lg mx-auto text-xs sm:text-sm text-stone-700 leading-relaxed">
+          Pure goat milk bath bars, botanical shampoos, nourishing skincare, and wholesome millet cookies.
         </p>
 
         {/* Category Filter Pills */}
-        <div className="mt-8 flex flex-wrap justify-center gap-2.5">
+        <div className="pt-3 flex flex-wrap justify-center gap-2">
           {CATEGORIES_LIST.map((catName) => (
             <button
               key={catName}
               onClick={() => setActiveCategory(catName)}
-              className={`rounded-full px-5 py-2 text-xs font-bold uppercase tracking-wider transition ${
+              className={`rounded-md px-3.5 py-1.5 text-xs font-semibold uppercase tracking-wider transition ${
                 activeCategory === catName
-                  ? "bg-[#2E5E4E] text-[#FAF8F3] shadow-md"
-                  : "border border-[#2E5E4E]/15 bg-white text-[#2E5E4E] hover:bg-[#2E5E4E] hover:text-[#FAF8F3]"
+                  ? "bg-[#173F32] text-[#FCFAF5]"
+                  : "border border-stone-300 bg-white text-[#173F32] hover:bg-[#173F32] hover:text-[#FCFAF5]"
               }`}
             >
               {catName}
@@ -100,23 +100,21 @@ function ShopContent() {
         </div>
 
         {/* Search & Filter Controls */}
-        <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-t border-[#2E5E4E]/10 pt-6">
+        <div className="pt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-t border-stone-300/60 mt-4">
           <div className="relative flex-1 max-w-md mx-auto sm:mx-0">
-            <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#C9A66B]" />
+            <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#C9A45C]" />
             <input
               type="text"
               placeholder="Search products or ingredients..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full rounded-full border border-[#2E5E4E]/15 bg-white py-2.5 pl-11 pr-4 text-xs text-[#2E5E4E] placeholder:text-[#6e6258] outline-none focus:border-[#C9A66B]"
+              className="w-full rounded-md border border-stone-300 bg-white py-2 pl-10 pr-3 text-xs text-[#173F32] placeholder:text-stone-400 outline-none focus:border-[#173F32]"
             />
           </div>
 
-          <div className="flex items-center justify-center gap-4 flex-wrap">
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-[#2E5E4E] flex items-center gap-1">
-                <Filter className="h-3.5 w-3.5 text-[#C9A66B]" /> Max Price: ₹{maxPrice}
-              </span>
+          <div className="flex items-center justify-center gap-3 flex-wrap text-xs">
+            <div className="flex items-center gap-2 text-stone-700 font-medium">
+              <Filter className="h-3.5 w-3.5 text-[#C9A45C]" /> Max Price: ₹{maxPrice}
               <input
                 type="range"
                 min="100"
@@ -124,14 +122,14 @@ function ShopContent() {
                 step="10"
                 value={maxPrice}
                 onChange={(e) => setMaxPrice(Number(e.target.value))}
-                className="accent-[#2E5E4E] cursor-pointer"
+                className="accent-[#173F32] cursor-pointer"
               />
             </div>
 
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as any)}
-              className="rounded-full border border-[#2E5E4E]/15 bg-white px-4 py-2 text-xs font-bold text-[#2E5E4E] outline-none cursor-pointer"
+              className="rounded-md border border-stone-300 bg-white px-3 py-1.5 text-xs font-medium text-[#173F32] outline-none cursor-pointer"
             >
               <option value="featured">Sort by Featured</option>
               <option value="rating">Sort by Rating</option>
@@ -143,31 +141,31 @@ function ShopContent() {
       </section>
 
       {/* Product Results */}
-      <section className="space-y-6">
-        <div className="flex items-center justify-between text-xs font-bold uppercase tracking-widest text-[#2E5E4E]">
+      <section className="space-y-4">
+        <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-[#173F32]">
           <span>Showing {sortedProducts.length} Products</span>
           {activeCategory !== "All" && (
-            <span className="text-[#C9A66B]">Category: {activeCategory}</span>
+            <span className="text-[#C9A45C]">Category: {activeCategory}</span>
           )}
         </div>
 
         {sortedProducts.length === 0 ? (
-          <div className="rounded-[2rem] border border-[#2E5E4E]/10 bg-white p-12 text-center text-[#2E5E4E]">
-            <p className="text-lg font-bold font-serif">No products found matching your filter criteria.</p>
-            <p className="mt-2 text-xs text-[#6e6258]">Try adjusting your search query, price slider, or category selection.</p>
+          <div className="rounded-xl border border-stone-200 bg-white p-10 text-center text-[#173F32]">
+            <p className="text-base font-bold font-serif">No products found matching your filter criteria.</p>
+            <p className="mt-1 text-xs text-stone-500">Try adjusting your search query, price slider, or category selection.</p>
             <button
               onClick={() => {
                 setActiveCategory("All");
                 setSearchQuery("");
-                setMaxPrice(50);
+                setMaxPrice(500);
               }}
-              className="mt-6 rounded-full bg-[#2E5E4E] px-6 py-2.5 text-xs font-bold uppercase tracking-wider text-[#FAF8F3] hover:bg-[#C9A66B] hover:text-[#2E5E4E] transition"
+              className="mt-4 rounded-md bg-[#173F32] px-5 py-2 text-xs font-semibold uppercase tracking-wider text-[#FCFAF5] hover:bg-[#0D2F25] transition"
             >
               Reset Filters
             </button>
           </div>
         ) : (
-          <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          <div className="grid gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {sortedProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
@@ -176,6 +174,7 @@ function ShopContent() {
       </section>
     </main>
   );
+
 }
 
 export default function ShopPage() {
