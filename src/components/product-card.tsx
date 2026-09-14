@@ -11,9 +11,10 @@ import { useCart } from "@/context/cart-context";
 interface ProductCardProps {
   product: Product;
   showRating?: boolean;
+  imageAspect?: "square" | "portrait";
 }
 
-export function ProductCard({ product, showRating = true }: ProductCardProps) {
+export function ProductCard({ product, showRating = true, imageAspect = "portrait" }: ProductCardProps) {
   const { addToCart } = useCart();
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [quickViewOpen, setQuickViewOpen] = useState(false);
@@ -39,18 +40,20 @@ export function ProductCard({ product, showRating = true }: ProductCardProps) {
     setQuickViewOpen(true);
   };
 
+  const aspectClass = imageAspect === "portrait" ? "aspect-[3/4]" : "aspect-square";
+
   return (
     <>
-      <article className="group relative flex flex-col overflow-hidden bg-white border border-[#E5DFD5] p-3 shadow-2xs transition-all duration-300 hover:border-[#1A3C2F]/40 hover:shadow-md">
-        {/* Large Product Image Container */}
-        <div className="relative aspect-square w-full overflow-hidden bg-[#FAF7F2]">
+      <article className="group relative flex flex-col overflow-hidden bg-[#FAF7F2] border border-[#E5DFD5] transition-all duration-300 hover:border-[#1A3C2F]/30 hover:shadow-lg">
+        {/* Product Image Container */}
+        <div className={`relative ${aspectClass} w-full overflow-hidden bg-[#F3EDE4]`}>
           {/* Wishlist Button */}
           <button
             onClick={handleWishlist}
-            className={`absolute right-2.5 top-2.5 z-10 p-1.5 rounded-full backdrop-blur-xs transition ${
+            className={`absolute right-2.5 top-2.5 z-10 p-1.5 transition ${
               isWishlisted
                 ? "bg-white text-red-500 shadow-sm"
-                : "bg-white/80 text-[#1A3C2F] hover:bg-white hover:text-red-500"
+                : "bg-white/80 text-[#1A3C2F] hover:bg-white hover:text-red-500 opacity-0 group-hover:opacity-100"
             }`}
             aria-label="Wishlist"
           >
@@ -59,8 +62,15 @@ export function ProductCard({ product, showRating = true }: ProductCardProps) {
 
           {/* Badge Tag */}
           {product.badge && (
-            <span className="absolute left-2.5 top-2.5 z-10 bg-[#1A3C2F] px-2 py-0.5 text-[9px] font-semibold tracking-wider text-[#FAF7F2] uppercase">
+            <span className="absolute left-0 top-3.5 z-10 bg-[#1A3C2F] px-2.5 py-0.5 text-[9px] font-bold tracking-[0.14em] text-[#FAF7F2] uppercase">
               {product.badge}
+            </span>
+          )}
+
+          {/* Sale Badge */}
+          {product.originalPrice && product.originalPrice > product.price && (
+            <span className="absolute right-0 top-3.5 z-10 bg-[#C5A059] px-2.5 py-0.5 text-[9px] font-bold tracking-[0.14em] text-[#1A3C2F] uppercase">
+              SALE
             </span>
           )}
 
@@ -70,47 +80,48 @@ export function ProductCard({ product, showRating = true }: ProductCardProps) {
               src={product.image}
               alt={product.name}
               fill
-              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-              className="object-cover transition-transform duration-700 group-hover:scale-104"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+              style={{ objectPosition: "center center" }}
             />
           </Link>
 
-          {/* Quick View Button */}
+          {/* Quick View Overlay */}
           <button
             onClick={handleQuickView}
-            className="absolute bottom-2.5 left-2.5 right-2.5 z-10 flex items-center justify-center gap-1.5 bg-white/95 py-2 text-[10px] font-semibold tracking-wider uppercase text-[#1A3C2F] opacity-0 transition-all duration-200 group-hover:opacity-100 hover:bg-[#1A3C2F] hover:text-white shadow-sm"
+            className="absolute bottom-0 left-0 right-0 z-10 flex items-center justify-center gap-1.5 bg-[#1A3C2F]/90 py-2.5 text-[10px] font-bold tracking-widest uppercase text-[#FAF7F2] opacity-0 transition-all duration-200 group-hover:opacity-100 hover:bg-[#1A3C2F]"
           >
             <Eye className="h-3.5 w-3.5 text-[#C5A059]" /> Quick View
           </button>
         </div>
 
         {/* Product Details */}
-        <div className="mt-3 flex flex-1 flex-col justify-between space-y-2">
+        <div className="p-4 flex flex-1 flex-col justify-between space-y-3">
           <div>
             {/* Category & Size */}
-            <div className="flex items-center justify-between text-[10px] font-medium tracking-wider uppercase text-[#C5A059]">
-              <span>{product.category}</span>
-              <span className="text-[#7C907C] lowercase">{product.size || "300g"}</span>
+            <div className="flex items-center justify-between text-[10px] font-bold tracking-[0.14em] uppercase">
+              <span className="text-[#C5A059]">{product.category}</span>
+              <span className="text-[#7C907C]">{product.size || "300g"}</span>
             </div>
 
             {/* Product Title */}
             <Link href={`/product/${product.slug}`}>
-              <h3 className="mt-1 text-xs sm:text-sm font-bold text-[#1A3C2F] transition-colors hover:text-[#C5A059] line-clamp-2 leading-snug">
+              <h3 className="mt-1.5 text-sm font-bold text-[#1A3C2F] transition-colors hover:text-[#C5A059] line-clamp-2 leading-snug font-serif">
                 {product.name}
               </h3>
             </Link>
 
-            {/* Short Benefit */}
-            <p className="mt-1 text-[11px] text-[#556B61] line-clamp-2 leading-relaxed">
+            {/* Short Description */}
+            <p className="mt-1.5 text-[11px] text-[#556B61] line-clamp-2 leading-relaxed">
               {product.shortDescription}
             </p>
           </div>
 
-          <div className="pt-2 border-t border-[#E5DFD5]/60 space-y-2">
+          <div className="pt-3 border-t border-[#E5DFD5] space-y-2.5">
             {/* Price & Rating */}
             <div className="flex items-center justify-between">
-              <div className="flex items-baseline gap-1.5">
-                <span className="text-sm sm:text-base font-bold text-[#1A3C2F]">₹{product.price}</span>
+              <div className="flex items-baseline gap-2">
+                <span className="text-base font-bold text-[#1A3C2F]">₹{product.price}</span>
                 {product.originalPrice && (
                   <span className="text-xs text-[#7C907C] line-through">₹{product.originalPrice}</span>
                 )}
@@ -128,10 +139,10 @@ export function ProductCard({ product, showRating = true }: ProductCardProps) {
             {/* Add to Cart CTA */}
             <button
               onClick={handleAddToCart}
-              className={`w-full flex items-center justify-center gap-1.5 py-2 text-[10px] font-bold uppercase tracking-widest transition-colors ${
+              className={`w-full flex items-center justify-center gap-1.5 py-2.5 text-[10px] font-bold uppercase tracking-[0.18em] transition-all ${
                 added
                   ? "bg-emerald-800 text-white"
-                  : "bg-[#1A3C2F] text-[#FAF7F2] hover:bg-[#122B22]"
+                  : "bg-[#1A3C2F] text-[#FAF7F2] hover:bg-[#C5A059] hover:text-[#1A3C2F]"
               }`}
             >
               {added ? (
@@ -140,7 +151,7 @@ export function ProductCard({ product, showRating = true }: ProductCardProps) {
                 </>
               ) : (
                 <>
-                  <ShoppingBag className="h-3.5 w-3.5 text-[#C5A059]" /> Add to Cart
+                  <ShoppingBag className="h-3.5 w-3.5" /> Add to Cart
                 </>
               )}
             </button>
@@ -153,5 +164,3 @@ export function ProductCard({ product, showRating = true }: ProductCardProps) {
     </>
   );
 }
-
-

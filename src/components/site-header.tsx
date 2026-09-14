@@ -14,13 +14,12 @@ export function SiteHeader() {
 
   const navLinks = [
     { label: "Home", href: "/" },
-    { label: "Bath Bars", href: "/shop?category=Bath Bars" },
+    { label: "Bath Bars", href: "/bath-bars" },
     { label: "Shampoos", href: "/shop?category=Premium Shampoos" },
     { label: "Skincare", href: "/shop?category=Organic Skincare" },
     { label: "Lip Care", href: "/shop?category=Lip Care" },
     { label: "Cookies", href: "/cookies" },
     { label: "Contact", href: "/contact" },
-    { label: "Admin", href: "/admin/orders" },
   ];
 
   return (
@@ -156,6 +155,5 @@ export function SiteHeader() {
     </header>
   );
 }
-
 
 

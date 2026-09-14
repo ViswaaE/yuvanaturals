@@ -56,9 +56,7 @@ export function SiteFooter() {
         {/* Bottom Copyright & Tagline */}
         <div className="mt-12 border-t border-[#FAF7F2]/10 pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-[#FAF7F2]/60 gap-3">
           <p>&copy; {new Date().getFullYear()} YUVA NATURALS. All rights reserved.</p>
-          <p className="font-serif text-[#C5A059] tracking-wider text-[11px]">
-            &ldquo;Nature&apos;s Touch, Radiant Glow&rdquo;
-          </p>
+          <p className="font-serif text-[#C5A059] tracking-wider text-[11px]">&ldquo;Nature&apos;s Touch, Radiant Glow&rdquo;</p>
         </div>
       </div>
     </footer>

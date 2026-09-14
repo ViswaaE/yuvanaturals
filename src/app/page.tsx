@@ -146,7 +146,7 @@ export default function Home() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
             {bestSellers.map((product) => (
-              <ProductCard key={product.id} product={product} />
+              <ProductCard key={product.id} product={product} imageAspect="portrait" />
             ))}
           </div>
         </section>
@@ -185,7 +185,7 @@ export default function Home() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-5 pt-2">
             {bathBars.map((product) => (
-              <ProductCard key={product.id} product={product} />
+              <ProductCard key={product.id} product={product} imageAspect="portrait" />
             ))}
           </div>
         </section>

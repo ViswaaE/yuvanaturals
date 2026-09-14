@@ -7,7 +7,7 @@ export async function GET(
   { params }: { params: Promise<{ name: string }> }
 ) {
   const { name } = await params;
-  const brainDir = "C:\\Users\\viswa\\.gemini\\antigravity\\brain\\01c25777-f23e-4bea-82a7-f08965334f44";
+  const brainDir = "C:\\Users\\viswa\\.gemini\\antigravity\\brain\\937f3b3d-86ad-4be5-a574-093aede44994";
   const publicProductsDir = path.join(process.cwd(), "public", "products");
 
   if (!fs.existsSync(publicProductsDir)) {
