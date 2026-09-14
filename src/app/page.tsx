@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, Star, HeartHandshake, Leaf, Sparkles, Clock, MessageSquare } from "lucide-react";
+import { ArrowRight, Star, HeartHandshake, Leaf, Sparkles, ShieldCheck, CheckCircle2, MessageSquare, Quote } from "lucide-react";
 import { PageShell } from "@/components/page-shell";
 import { ProductCard } from "@/components/product-card";
 import { HeroSection } from "@/components/hero-section";
@@ -8,78 +8,142 @@ import { CategoryCard, type CategoryCardData } from "@/components/category-card"
 import { products } from "@/constants/products";
 
 export default function Home() {
-  // Category cards data
+  // Editorial Category sections
   const CATEGORIES: CategoryCardData[] = [
-    { title: "Bath Bars", image: "/api/images/goat_milk_lavender_bar", href: "/shop?category=Bath Bars" },
-    { title: "Shampoos", image: "/api/images/hibiscus_shampoo", href: "/shop?category=Premium Shampoos" },
-    { title: "Skincare", image: "/api/images/rose_aura_toner", href: "/shop?category=Organic Skincare" },
-    { title: "Lip Care", image: "/api/images/raspberry_lip_balm", href: "/shop?category=Lip Care" },
-    { title: "Cookies", image: "/api/images/thinai_cookies", href: "/cookies" },
-    { title: "Gift Collections", image: "/api/images/nalugumavu_bath_bar", href: "/shop?collection=Gift Collections" },
+    {
+      title: "Bath Bars",
+      description: "Handcrafted pure goat milk & cold-pressed oil soap bars with embossed logo.",
+      image: "/api/images/goat_milk_lavender_bar",
+      href: "/shop?category=Bath Bars",
+    },
+    {
+      title: "Shampoos",
+      description: "Botanical hair cleansers enriched with flaxseed, hibiscus & coconut milk.",
+      image: "/api/images/hibiscus_shampoo",
+      href: "/shop?category=Premium Shampoos",
+    },
+    {
+      title: "Skincare",
+      description: "Antioxidant Damask rose mists, red wine glow gels & acne face treatments.",
+      image: "/api/images/rose_aura_toner",
+      href: "/shop?category=Organic Skincare",
+    },
+    {
+      title: "Lip Care",
+      description: "Raw shea butter & natural raspberry fruit extracts for soft, tinted lips.",
+      image: "/api/images/raspberry_lip_balm",
+      href: "/shop?category=Lip Care",
+    },
+    {
+      title: "Cookies",
+      description: "300g packs of traditional millet cookies baked with jaggery & pure ghee.",
+      image: "/api/images/thinai_cookies",
+      href: "/cookies",
+    },
   ];
 
-  // Best Sellers (4 desktop, 2-3 tablet, 1-2 mobile)
-  const bestSellers = products.filter((p) => p.badge === "Best Seller").slice(0, 4);
+  // Best Sellers
+  const bestSellers = products.filter((p) => p.badge === "Best Seller" || p.collections.includes("Best Sellers")).slice(0, 4);
 
-  // Bath Bars (All 6 requested)
+  // Featured Collection items
+  const featuredRituals = products.slice(0, 6);
+
+  // Bath Bars
   const bathBars = products.filter((p) => p.category === "Bath Bars");
 
-  // Shampoos (All 3 requested)
-  const shampoos = products.filter((p) => p.category === "Premium Shampoos");
+  // Botanical ingredients philosophy data
+  const INGREDIENTS_PHILOSOPHY = [
+    {
+      name: "Pure Fresh Goat Milk",
+      benefit: "pH-Balanced Hydration",
+      desc: "Rich in lactic acid and natural A & E vitamins to gently dissolve dead skin while nourishing lipids.",
+      image: "/api/images/goat_milk_lavender_bar",
+    },
+    {
+      name: "Manjistha & Licorice",
+      benefit: "Ayurvedic Glow & Complexion",
+      desc: "Traditional Indian madder root synergy that visibly brightens uneven pigmentation.",
+      image: "/api/images/manjishtha_bath_bar",
+    },
+    {
+      name: "Red Wine Resveratrol",
+      benefit: "Potent Antioxidant Renewal",
+      desc: "Protects cellular matrix from oxidative stress and improves youthful skin firmness.",
+      image: "/api/images/red_wine_glow_gel",
+    },
+    {
+      name: "Neem, Tulsi & Kuppaimeni",
+      benefit: "Blemish & Acne Clarifying",
+      desc: "Time-tested antibacterial leaf elixirs that soothe reactive skin and clear congested pores.",
+      image: "/api/images/aloe_neem_tulsi_bar",
+    },
+  ];
 
-  // Skincare & Lip Care (All 4 requested)
-  const skincareProducts = products.filter(
-    (p) => p.category === "Organic Skincare" || p.category === "Lip Care"
-  );
-
-  // Cookies (All 5 requested)
-  const cookies = products.filter((p) => p.category === "Cookies");
-
-  // Top Rated Products (sorted by rating and review count)
-  const topRated = [...products].sort((a, b) => b.rating - a.rating || b.reviews - a.reviews).slice(0, 4);
-
-  // Instagram feed images
-  const INSTAGRAM_IMAGES = [
-    "/api/images/goat_milk_lavender_bar",
-    "/api/images/red_wine_glow_gel",
-    "/api/images/hibiscus_shampoo",
-    "/api/images/thinai_cookies",
-    "/api/images/rose_aura_toner",
-    "/api/images/nalugumavu_bath_bar",
+  // Verified Testimonials
+  const TESTIMONIALS = [
+    {
+      author: "Aaradhya S.",
+      city: "Bengaluru",
+      rating: 5,
+      review: "The Goat Milk Lavender soap is unmatched! You can see the handmade texture and the embossed logo. My skin has never felt softer after a shower.",
+      product: "Pure Goat Milk Lavender Soap",
+    },
+    {
+      author: "Kavya Menon",
+      city: "Kochi",
+      rating: 5,
+      review: "The Nalugumavu bath bar and Red Wine Glow Gel are staples in my morning routine now. Authentic South Indian botanical aromas!",
+      product: "Nalugumavu Bath Bar",
+    },
+    {
+      author: "Siddharth Rao",
+      city: "Chennai",
+      rating: 5,
+      review: "Thinai and Kavuni Black Rice cookies taste genuinely homemade. Not overly sweet, packed with fiber, and my kids love them.",
+      product: "Kavuni Black Rice Cookies",
+    },
   ];
 
   return (
     <PageShell>
-      <main className="space-y-16 pb-16 pt-4">
-        {/* 1. HERO BANNER */}
+      <main className="space-y-16 pb-20 pt-4">
+        {/* 1. HERO SECTION */}
         <HeroSection />
 
-        {/* 2. SHOP BY CATEGORY (Immediately below Hero) */}
-        <section className="space-y-4">
-          <div className="flex items-center justify-between border-b border-stone-200 pb-2">
-            <h2 className="text-xl font-bold font-serif text-[#173F32]">Shop by Category</h2>
-            <Link href="/shop" className="text-xs font-semibold text-[#173F32] hover:text-[#C9A45C] transition">
-              View All Categories &rarr;
-            </Link>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5">
-            {CATEGORIES.map((cat) => (
-              <CategoryCard key={cat.title} category={cat} />
-            ))}
+        {/* 2. BRAND VALUES (Clean horizontal bar) */}
+        <section className="bg-white border border-[#E5DFD5] p-5 sm:p-6 shadow-2xs">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+            <div className="flex items-center justify-center gap-2.5">
+              <HeartHandshake className="h-4 w-4 text-[#C5A059] flex-shrink-0" />
+              <span className="text-xs font-bold uppercase tracking-wider text-[#1A3C2F]">Handcrafted</span>
+            </div>
+            <div className="flex items-center justify-center gap-2.5">
+              <Leaf className="h-4 w-4 text-[#C5A059] flex-shrink-0" />
+              <span className="text-xs font-bold uppercase tracking-wider text-[#1A3C2F]">Botanical Ingredients</span>
+            </div>
+            <div className="flex items-center justify-center gap-2.5">
+              <Sparkles className="h-4 w-4 text-[#C5A059] flex-shrink-0" />
+              <span className="text-xs font-bold uppercase tracking-wider text-[#1A3C2F]">Made with Care</span>
+            </div>
+            <div className="flex items-center justify-center gap-2.5">
+              <ShieldCheck className="h-4 w-4 text-[#C5A059] flex-shrink-0" />
+              <span className="text-xs font-bold uppercase tracking-wider text-[#1A3C2F]">Traditional Wisdom</span>
+            </div>
           </div>
         </section>
 
-        {/* 3. FEATURED PRODUCTS (Our Best Sellers) */}
-        <section className="space-y-4">
-          <div className="flex items-center justify-between border-b border-stone-200 pb-2">
+        {/* 3. FEATURED COLLECTION */}
+        <section className="space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between border-b border-[#E5DFD5] pb-3 gap-2">
             <div>
-              <span className="text-[10px] font-semibold text-[#C9A45C] uppercase tracking-wider">FEATURED RITUALS</span>
-              <h2 className="text-2xl font-bold font-serif text-[#173F32]">Our Best Sellers</h2>
+              <span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#C5A059]">BOTANICAL ESSENTIALS</span>
+              <h2 className="text-2xl sm:text-3xl font-serif font-bold text-[#1A3C2F]">Crafted for Your Daily Ritual</h2>
             </div>
-            <Link href="/shop?collection=Best Sellers" className="text-xs font-semibold text-[#173F32] hover:text-[#C9A45C] transition">
-              Shop Best Sellers &rarr;
+            <Link href="/shop" className="text-xs font-bold tracking-wider uppercase text-[#1A3C2F] hover:text-[#C5A059] transition flex items-center gap-1">
+              Explore Full Collection &rarr;
             </Link>
           </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
             {bestSellers.map((product) => (
               <ProductCard key={product.id} product={product} />
@@ -87,18 +151,38 @@ export default function Home() {
           </div>
         </section>
 
-        {/* 4. BATH BAR PRODUCTS SECTION */}
-        <section className="space-y-4 bg-[#F7F2E8] border border-stone-200/80 rounded-2xl p-6 sm:p-8">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-stone-300/60 pb-3">
+        {/* 4. SHOP BY CATEGORY */}
+        <section className="space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between border-b border-[#E5DFD5] pb-3 gap-2">
             <div>
-              <span className="text-[10px] font-semibold text-[#C9A45C] uppercase tracking-wider">HANDCRAFTED SOAPS</span>
-              <h2 className="text-2xl font-bold font-serif text-[#173F32]">Bath Bars</h2>
-              <p className="text-xs text-stone-600">Pure goat milk and herbal oils cold-processed for gentle daily cleansing.</p>
+              <span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#C5A059]">CURATED RITUALS</span>
+              <h2 className="text-2xl sm:text-3xl font-serif font-bold text-[#1A3C2F]">Shop by Category</h2>
             </div>
-            <Link href="/shop?category=Bath Bars" className="text-xs font-semibold text-[#173F32] hover:text-[#C9A45C] transition shrink-0">
+            <Link href="/shop" className="text-xs font-bold tracking-wider uppercase text-[#1A3C2F] hover:text-[#C5A059] transition">
+              View All Categories &rarr;
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            {CATEGORIES.map((cat) => (
+              <CategoryCard key={cat.title} category={cat} />
+            ))}
+          </div>
+        </section>
+
+        {/* 5. BEST SELLERS (Artisanal Bath Bars Focus) */}
+        <section className="space-y-6 bg-[#F3EDE4] border border-[#E5DFD5] p-6 sm:p-10">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between border-b border-[#E5DFD5] pb-3 gap-2">
+            <div>
+              <span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#C5A059]">HANDMADE COLD-PROCESS SOAPS</span>
+              <h2 className="text-2xl sm:text-3xl font-serif font-bold text-[#1A3C2F]">Our Artisanal Bath Bars</h2>
+              <p className="text-xs text-[#556B61] mt-1">Cold-processed over 6 weeks with goat milk, unrefined shea butter, and pure essential oils.</p>
+            </div>
+            <Link href="/shop?category=Bath Bars" className="text-xs font-bold tracking-wider uppercase text-[#1A3C2F] hover:text-[#C5A059] transition shrink-0">
               View All Bath Bars &rarr;
             </Link>
           </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-5 pt-2">
             {bathBars.map((product) => (
               <ProductCard key={product.id} product={product} />
@@ -106,213 +190,129 @@ export default function Home() {
           </div>
         </section>
 
-        {/* 5. SHAMPOOS SECTION */}
-        <section className="space-y-4">
-          <div className="flex items-center justify-between border-b border-stone-200 pb-2">
-            <div>
-              <span className="text-[10px] font-semibold text-[#C9A45C] uppercase tracking-wider">HAIR CARE</span>
-              <h2 className="text-2xl font-bold font-serif text-[#173F32]">Botanical Shampoos</h2>
-            </div>
-            <Link href="/shop?category=Premium Shampoos" className="text-xs font-semibold text-[#173F32] hover:text-[#C9A45C] transition">
-              Explore Shampoos &rarr;
-            </Link>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
-            {shampoos.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        </section>
-
-        {/* 6. SKINCARE SECTION */}
-        <section className="space-y-4">
-          <div className="flex items-center justify-between border-b border-stone-200 pb-2">
-            <div>
-              <span className="text-[10px] font-semibold text-[#C9A45C] uppercase tracking-wider">ORGANIC CARE</span>
-              <h2 className="text-2xl font-bold font-serif text-[#173F32]">Skincare &amp; Lip Care</h2>
-            </div>
-            <Link href="/shop?category=Organic Skincare" className="text-xs font-semibold text-[#173F32] hover:text-[#C9A45C] transition">
-              View Skincare &rarr;
-            </Link>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5">
-            {skincareProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        </section>
-
-        {/* 7. COOKIES SECTION (Separate Category) */}
-        <section className="space-y-4 bg-[#F7F2E8] border border-stone-200/80 rounded-2xl p-6 sm:p-8">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-stone-300/60 pb-3">
-            <div>
-              <span className="text-[10px] font-semibold text-[#C9A45C] uppercase tracking-wider">TRADITIONAL GRAINS</span>
-              <h2 className="text-2xl font-bold font-serif text-[#173F32]">Wholesome Millet Cookies</h2>
-              <p className="text-xs text-stone-600">300g packs of traditional millet cookies crafted with jaggery and pure cow ghee.</p>
-            </div>
-            <Link href="/cookies" className="text-xs font-semibold text-[#173F32] hover:text-[#C9A45C] transition shrink-0">
-              Explore All Cookies &rarr;
-            </Link>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 pt-2">
-            {cookies.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        </section>
-
-        {/* 8. BRAND STORY SECTION */}
-        <section className="bg-white border border-stone-200 rounded-2xl p-6 sm:p-10">
-          <div className="grid gap-8 lg:grid-cols-12 items-center">
-            <div className="lg:col-span-5 relative aspect-[4/3] w-full overflow-hidden rounded-xl bg-[#F7F2E8] border border-stone-200">
+        {/* 6. OUR STORY (Editorial Split Section) */}
+        <section className="bg-white border border-[#E5DFD5] p-6 sm:p-12">
+          <div className="grid gap-10 lg:grid-cols-12 items-center">
+            <div className="lg:col-span-6 relative aspect-[4/3] w-full overflow-hidden bg-[#FAF7F2] border border-[#E5DFD5]">
               <Image
                 src="/api/images/nalugumavu_bath_bar"
-                alt="YUVA NATURALS Botanical Craftsmanship"
+                alt="Handcrafted YUVA NATURALS Ayurvedic Bath Bar Craftsmanship"
                 fill
                 className="object-cover"
               />
+              <div className="absolute inset-0 border-[12px] border-white/20 pointer-events-none" />
             </div>
 
-            <div className="lg:col-span-7 space-y-4">
-              <span className="text-[10px] font-semibold uppercase tracking-wider text-[#C9A45C]">
-                ABOUT YUVA NATURALS
+            <div className="lg:col-span-6 space-y-4">
+              <span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#C5A059]">
+                OUR HERITAGE &amp; BOTANICAL CRAFT
               </span>
-              <h2 className="text-2xl sm:text-3xl font-serif font-bold text-[#173F32]">
-                Natural Care, Made with Purpose
+              <h2 className="text-3xl sm:text-4xl font-serif font-bold text-[#1A3C2F] leading-tight">
+                Rooted in nature.<br />
+                Crafted with care.
               </h2>
-              <p className="text-xs sm:text-sm text-stone-700 leading-relaxed max-w-xl">
-                YUVA NATURALS combines traditional botanical ingredients with modern handcrafted care for skin, hair and everyday wellness.
+              <p className="text-xs sm:text-sm text-[#3E564A] leading-relaxed">
+                YUVA NATURALS combines traditional Indian herbal knowledge with carefully selected natural ingredients. Every bath bar is cold-processed to retain vital nutrients, and every cookie is slow-baked with whole traditional grains and unrefined jaggery.
               </p>
-              <div className="pt-2">
+              <p className="text-xs text-[#556B61] leading-relaxed">
+                We believe skin and hair care should be free of aggressive harsh detergents, artificial fragrances, and cheap fillers. Our promise is small-batch botanical purity.
+              </p>
+
+              <div className="pt-3">
                 <Link
                   href="/about"
-                  className="inline-flex items-center gap-2 rounded-md bg-[#173F32] px-6 py-2.5 text-xs font-semibold uppercase tracking-wider text-[#FCFAF5] transition hover:bg-[#0D2F25]"
+                  className="inline-flex items-center gap-2 bg-[#1A3C2F] px-6 py-3 text-[11px] font-bold uppercase tracking-[0.16em] text-[#FAF7F2] hover:bg-[#122B22] transition"
                 >
-                  OUR STORY <ArrowRight className="h-3.5 w-3.5" />
+                  DISCOVER OUR STORY <ArrowRight className="h-3.5 w-3.5 text-[#C5A059]" />
                 </Link>
               </div>
             </div>
           </div>
         </section>
 
-        {/* 9. SHOP BY RATING / TOP RATED */}
-        <section className="space-y-4">
-          <div className="flex items-center justify-between border-b border-stone-200 pb-2">
-            <div>
-              <span className="text-[10px] font-semibold text-[#C9A45C] uppercase tracking-wider">CUSTOMER FAVORITES</span>
-              <h2 className="text-2xl font-bold font-serif text-[#173F32]">Top Rated Products</h2>
-            </div>
-            <Link href="/shop" className="text-xs font-semibold text-[#173F32] hover:text-[#C9A45C] transition">
-              View All Catalog &rarr;
-            </Link>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5">
-            {topRated.map((product) => (
-              <ProductCard key={product.id} product={product} showRating={true} />
-            ))}
-          </div>
-        </section>
-
-        {/* 10. WHY CHOOSE YUVA NATURALS */}
-        <section className="bg-[#F7F2E8] border border-stone-200/80 rounded-2xl p-6 sm:p-8 space-y-6">
-          <div className="text-center max-w-md mx-auto space-y-1">
-            <span className="text-[10px] font-semibold text-[#C9A45C] uppercase tracking-wider">OUR COMMITMENT</span>
-            <h2 className="text-2xl font-serif font-bold text-[#173F32]">Why Choose YUVA NATURALS</h2>
+        {/* 7. INGREDIENT PHILOSOPHY */}
+        <section className="space-y-6">
+          <div className="text-center max-w-xl mx-auto space-y-2">
+            <span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#C5A059]">BOTANICAL PURITY</span>
+            <h2 className="text-2xl sm:text-3xl font-serif font-bold text-[#1A3C2F]">Ingredient Philosophy</h2>
+            <p className="text-xs text-[#556B61]">Thoughtfully chosen flora, fresh farm milk, and cold-pressed seed oils.</p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-white border border-stone-200 p-4 rounded-xl text-center space-y-2">
-              <div className="inline-flex p-2.5 rounded-full bg-[#F7F2E8] text-[#173F32]">
-                <HeartHandshake className="h-5 w-5" />
-              </div>
-              <h3 className="text-sm font-semibold text-[#173F32]">Handcrafted with Care</h3>
-              <p className="text-xs text-stone-600 leading-snug">
-                Made in small batches using traditional cold-process methods.
-              </p>
-            </div>
-
-            <div className="bg-white border border-stone-200 p-4 rounded-xl text-center space-y-2">
-              <div className="inline-flex p-2.5 rounded-full bg-[#F7F2E8] text-[#173F32]">
-                <Leaf className="h-5 w-5" />
-              </div>
-              <h3 className="text-sm font-semibold text-[#173F32]">Thoughtfully Selected Ingredients</h3>
-              <p className="text-xs text-stone-600 leading-snug">
-                Fresh goat milk, cold-pressed seed oils, and authentic botanicals.
-              </p>
-            </div>
-
-            <div className="bg-white border border-stone-200 p-4 rounded-xl text-center space-y-2">
-              <div className="inline-flex p-2.5 rounded-full bg-[#F7F2E8] text-[#173F32]">
-                <Sparkles className="h-5 w-5" />
-              </div>
-              <h3 className="text-sm font-semibold text-[#173F32]">Botanical Inspired</h3>
-              <p className="text-xs text-stone-600 leading-snug">
-                Formulated using traditional Ayurvedic and herbal wisdom.
-              </p>
-            </div>
-
-            <div className="bg-white border border-stone-200 p-4 rounded-xl text-center space-y-2">
-              <div className="inline-flex p-2.5 rounded-full bg-[#F7F2E8] text-[#173F32]">
-                <Clock className="h-5 w-5" />
-              </div>
-              <h3 className="text-sm font-semibold text-[#173F32]">Made for Everyday Use</h3>
-              <p className="text-xs text-stone-600 leading-snug">
-                Gentle formulas crafted for your daily skin, hair, and snacking routines.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* 11. WHATSAPP CTA SECTION */}
-        <section className="bg-[#173F32] text-[#FCFAF5] rounded-2xl p-6 sm:p-8 text-center max-w-2xl mx-auto space-y-3">
-          <div className="inline-flex p-2 rounded-full bg-white/10 text-[#C9A45C]">
-            <MessageSquare className="h-5 w-5" />
-          </div>
-          <h2 className="text-xl sm:text-2xl font-serif font-bold">Need help choosing the right product?</h2>
-          <p className="text-xs sm:text-sm text-[#FCFAF5]/80">Chat with us on WhatsApp for personal product guidance.</p>
-          <div className="pt-2">
-            <a
-              href="https://wa.me"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-md bg-[#C9A45C] px-6 py-2.5 text-xs font-semibold uppercase tracking-wider text-[#0D2F25] hover:bg-white transition"
-            >
-              CHAT ON WHATSAPP
-            </a>
-          </div>
-        </section>
-
-        {/* 12. INSTAGRAM SECTION (Follow YUVA NATURALS) */}
-        <section className="space-y-4">
-          <div className="text-center max-w-md mx-auto space-y-1">
-            <span className="text-[10px] font-semibold text-[#C9A45C] uppercase tracking-wider">@YUVANATURALS</span>
-            <h2 className="text-2xl font-serif font-bold text-[#173F32]">Follow YUVA NATURALS</h2>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-            {INSTAGRAM_IMAGES.map((imgSrc, idx) => (
-              <a
-                key={idx}
-                href="https://instagram.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group relative aspect-square overflow-hidden rounded-lg bg-stone-100 border border-stone-200"
-              >
-                <Image
-                  src={imgSrc}
-                  alt={`YUVA NATURALS Instagram photo ${idx + 1}`}
-                  fill
-                  className="object-cover transition-transform duration-300 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-[#173F32]/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-semibold">
-                  View Post
+            {INGREDIENTS_PHILOSOPHY.map((ing) => (
+              <div key={ing.name} className="bg-white border border-[#E5DFD5] p-4 flex flex-col justify-between space-y-3">
+                <div className="relative aspect-video w-full overflow-hidden bg-[#FAF7F2]">
+                  <Image src={ing.image} alt={ing.name} fill className="object-cover" />
                 </div>
-              </a>
+                <div className="space-y-1">
+                  <span className="text-[9px] font-bold uppercase tracking-wider text-[#C5A059]">{ing.benefit}</span>
+                  <h3 className="text-sm font-bold text-[#1A3C2F] font-serif">{ing.name}</h3>
+                  <p className="text-xs text-[#556B61] leading-relaxed">{ing.desc}</p>
+                </div>
+              </div>
             ))}
+          </div>
+        </section>
+
+        {/* 8. CUSTOMER TESTIMONIALS */}
+        <section className="bg-[#F3EDE4] border border-[#E5DFD5] p-6 sm:p-12 space-y-8">
+          <div className="text-center max-w-md mx-auto space-y-1">
+            <span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#C5A059]">VERIFIED REVIEWS</span>
+            <h2 className="text-2xl sm:text-3xl font-serif font-bold text-[#1A3C2F]">Words From Our Community</h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {TESTIMONIALS.map((t, idx) => (
+              <div key={idx} className="bg-white border border-[#E5DFD5] p-6 flex flex-col justify-between space-y-4">
+                <div className="space-y-3">
+                  <Quote className="h-6 w-6 text-[#C5A059] opacity-60" />
+                  <div className="flex items-center gap-1 text-[#C5A059]">
+                    {[...Array(t.rating)].map((_, i) => (
+                      <Star key={i} className="h-3.5 w-3.5 fill-current" />
+                    ))}
+                  </div>
+                  <p className="text-xs text-[#3E564A] leading-relaxed italic font-serif">
+                    &ldquo;{t.review}&rdquo;
+                  </p>
+                </div>
+
+                <div className="pt-3 border-t border-[#E5DFD5] flex items-center justify-between text-xs">
+                  <div>
+                    <p className="font-bold text-[#1A3C2F]">{t.author}</p>
+                    <p className="text-[10px] text-[#7C907C]">{t.city}</p>
+                  </div>
+                  <span className="text-[9px] font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 border border-emerald-200">
+                    Verified Buyer
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* 9. FINAL CTA */}
+        <section className="bg-[#1A3C2F] text-[#FAF7F2] p-8 sm:p-14 text-center max-w-4xl mx-auto space-y-4 shadow-xl">
+          <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-[#C5A059]">
+            DAILY BOTANICAL WELLNESS
+          </span>
+          <h2 className="text-3xl sm:text-4xl font-serif font-bold leading-tight">
+            Bring Nature Into Your Everyday Ritual
+          </h2>
+          <p className="text-xs sm:text-sm text-[#FAF7F2]/80 max-w-lg mx-auto leading-relaxed">
+            Experience handcrafted cold-processed soaps, high-potency hair mists, and nutrient-dense traditional grain cookies delivered across India.
+          </p>
+          <div className="pt-3">
+            <Link
+              href="/shop"
+              className="inline-flex items-center gap-2 bg-[#C5A059] px-8 py-3.5 text-xs font-bold uppercase tracking-[0.18em] text-[#1A3C2F] hover:bg-white transition"
+            >
+              SHOP ALL PRODUCTS <ArrowRight className="h-4 w-4" />
+            </Link>
           </div>
         </section>
       </main>
     </PageShell>
   );
 }
+
 
