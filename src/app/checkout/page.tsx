@@ -6,11 +6,12 @@ import Link from "next/link";
 import { PageShell } from "@/components/page-shell";
 import { YuvaLogo } from "@/components/yuva-logo";
 import { useCart } from "@/context/cart-context";
+import { generateUpiQrSvg } from "@/lib/upi";
+import { Order } from "@/types/order";
 import {
   CheckCircle2,
   Lock,
   ShieldCheck,
-  Sparkles,
   Truck,
   ArrowLeft,
   Copy,
@@ -19,55 +20,123 @@ import {
   Banknote,
   Clock,
   ArrowRight,
-  PackageCheck,
   QrCode,
+  AlertCircle,
+  HelpCircle,
 } from "lucide-react";
 
 export default function CheckoutPage() {
-  const { cart, finalTotal, rawSubtotal, discountAmount, shippingCost, clearCart } = useCart();
-  
-  // Customer Details Form State
+  const { cart, finalTotal, rawSubtotal, discountAmount, shippingCost, couponCode, clearCart } =
+    useCart();
+
+  // Customer Shipping Details State
   const [customerName, setCustomerName] = useState("");
   const [customerEmail, setCustomerEmail] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
-  const [address, setAddress] = useState("");
-  const [landmark, setLandmark] = useState("");
+  const [addressLine1, setAddressLine1] = useState("");
+  const [addressLine2, setAddressLine2] = useState("");
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
   const [pincode, setPincode] = useState("");
 
-  // Payment Selection
+  // Payment Selection & UTR State
   const [paymentMethod, setPaymentMethod] = useState<"upi" | "cod">("upi");
+  const [utrNumber, setUtrNumber] = useState("");
   const [copiedUpi, setCopiedUpi] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [orderId, setOrderId] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  // Order Submission Result State
+  const [submittedOrder, setSubmittedOrder] = useState<Order | null>(null);
 
   const upiId = "yuvanaturals@upi";
+  const upiRecipientName = "YUVA NATURALS";
+  const upiDeepLink = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(
+    upiRecipientName
+  )}&am=${finalTotal.toFixed(2)}&tn=${encodeURIComponent(
+    "Yuva Naturals Order"
+  )}&cu=INR`;
+
+  const qrSvgMarkup = generateUpiQrSvg(upiDeepLink);
 
   const handleCopyUpi = () => {
-    navigator.clipboard.writeText(upiId);
-    setCopiedUpi(true);
-    setTimeout(() => setCopiedUpi(false), 2500);
+    if (typeof window !== "undefined" && navigator.clipboard) {
+      navigator.clipboard.writeText(upiId);
+      setCopiedUpi(true);
+      setTimeout(() => setCopiedUpi(false), 2500);
+    }
   };
 
-  const handleCompletePayment = (e: React.FormEvent) => {
+  const handleSubmitOrder = async (e: React.FormEvent) => {
     e.preventDefault();
-    const generatedId = `YN-${new Date().getFullYear()}-${Math.floor(100000 + Math.random() * 900000)}`;
-    setOrderId(generatedId);
-    setIsSuccess(true);
-    clearCart();
+    setErrorMessage("");
+
+    // Validate cart
+    if (cart.length === 0) {
+      setErrorMessage("Your shopping bag is empty. Please add items before checking out.");
+      return;
+    }
+
+    // Validate UTR if UPI selected
+    if (paymentMethod === "upi" && (!utrNumber || utrNumber.trim().length < 6)) {
+      setErrorMessage("Please enter a valid 12-digit UPI UTR / Transaction Reference Number.");
+      return;
+    }
+
+    setSubmitting(true);
+
+    try {
+      const payload = {
+        customer: {
+          fullName: customerName,
+          email: customerEmail,
+          phone: customerPhone,
+          addressLine1,
+          addressLine2,
+          city,
+          state,
+          pincode,
+        },
+        items: cart.map((item) => ({
+          productId: item.product.id,
+          quantity: item.quantity,
+        })),
+        paymentMethod,
+        couponCode: couponCode || undefined,
+        utrNumber: paymentMethod === "upi" ? utrNumber.trim() : undefined,
+      };
+
+      const res = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+
+      if (data.success && data.order) {
+        setSubmittedOrder(data.order);
+        clearCart();
+      } else {
+        setErrorMessage(data.error || "Failed to submit order. Please try again.");
+      }
+    } catch (err: any) {
+      setErrorMessage(err.message || "Network error. Please check your connection.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
-  // UPI Deep link URL for mobile
-  const upiDeepLink = `upi://pay?pa=${upiId}&pn=Yuva%20Naturals&am=${finalTotal}&cu=INR&tn=Order%20${orderId || "YN-2026"}`;
-
-  // Order Status Tracker Steps
+  // Order Tracker Steps
   const orderSteps = [
-    { label: "Submitted", description: "Order Received", done: true },
-    { label: "Payment Verification", description: "Verifying UPI", active: true },
-    { label: "Confirmed", description: "Payment Verified", done: false },
-    { label: "Processing", description: "Handcrafting Batch", done: false },
-    { label: "Packed", description: "Botanical Cured", done: false },
+    { label: "Submitted", description: "Order Placed", done: true },
+    {
+      label: "Payment Verification",
+      description: submittedOrder?.paymentMethod === "upi" ? "Verifying UTR" : "COD Auto-Verified",
+      active: true,
+    },
+    { label: "Confirmed", description: "Order Verified", done: submittedOrder?.orderStatus === "Confirmed" },
+    { label: "Processing", description: "Batch Handcrafting", done: false },
     { label: "Shipped", description: "In Transit", done: false },
     { label: "Delivered", description: "At Doorstep", done: false },
   ];
@@ -79,16 +148,16 @@ export default function CheckoutPage() {
         <div className="flex items-center justify-between border-b border-[#E5DFD5] pb-3">
           <Link
             href="/cart"
-            className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#1A3C2F] hover:text-[#C5A059]"
+            className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#1A3C2F] hover:text-[#C5A059] transition"
           >
             <ArrowLeft className="h-4 w-4" /> Return to Shopping Bag
           </Link>
           <span className="text-xs text-[#7C907C] flex items-center gap-1 font-semibold">
-            <Lock className="h-3.5 w-3.5 text-emerald-700" /> 256-Bit Encrypted Secure Checkout
+            <Lock className="h-3.5 w-3.5 text-emerald-700" /> 256-Bit Encrypted Checkout
           </span>
         </div>
 
-        {!isSuccess ? (
+        {!submittedOrder ? (
           <>
             {/* Header Banner */}
             <section className="bg-[#F3EDE4] border border-[#E5DFD5] p-6 sm:p-8 text-center space-y-3">
@@ -99,24 +168,33 @@ export default function CheckoutPage() {
                 Complete Your Order
               </h1>
               <p className="text-xs text-[#556B61] max-w-lg mx-auto">
-                Simple &amp; secure payment via UPI QR code or Cash on Delivery across India.
+                Simple &amp; transparent payments via UPI QR Code or Cash on Delivery across India.
               </p>
             </section>
 
+            {errorMessage && (
+              <div className="bg-red-50 border border-red-300 p-4 text-xs text-red-900 flex items-center gap-2">
+                <AlertCircle className="h-4 w-4 text-red-700 flex-shrink-0" />
+                <span>{errorMessage}</span>
+              </div>
+            )}
+
             {/* Main Form & Summary Grid */}
-            <form onSubmit={handleCompletePayment} className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr]">
+            <form onSubmit={handleSubmitOrder} className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr]">
               <div className="space-y-6">
                 {/* 1. Customer Information */}
-                <div className="border border-[#E5DFD5] bg-white p-6 sm:p-8 space-y-4">
+                <div className="border border-[#E5DFD5] bg-white p-6 sm:p-8 space-y-4 shadow-xs">
                   <div className="flex items-center gap-3 border-b border-[#E5DFD5] pb-3">
                     <span className="flex h-6 w-6 items-center justify-center bg-[#1A3C2F] text-xs font-bold text-[#FAF7F2]">
                       1
                     </span>
-                    <h2 className="text-lg font-bold text-[#1A3C2F] font-serif">Customer Details</h2>
+                    <h2 className="text-lg font-bold text-[#1A3C2F] font-serif">Customer Information</h2>
                   </div>
 
                   <div>
-                    <label className="text-xs font-bold uppercase tracking-wider text-[#1A3C2F]">Full Name *</label>
+                    <label className="text-xs font-bold uppercase tracking-wider text-[#1A3C2F]">
+                      Full Name *
+                    </label>
                     <input
                       required
                       type="text"
@@ -129,7 +207,9 @@ export default function CheckoutPage() {
 
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div>
-                      <label className="text-xs font-bold uppercase tracking-wider text-[#1A3C2F]">Email Address *</label>
+                      <label className="text-xs font-bold uppercase tracking-wider text-[#1A3C2F]">
+                        Email Address *
+                      </label>
                       <input
                         required
                         type="email"
@@ -140,7 +220,9 @@ export default function CheckoutPage() {
                       />
                     </div>
                     <div>
-                      <label className="text-xs font-bold uppercase tracking-wider text-[#1A3C2F]">Mobile Number *</label>
+                      <label className="text-xs font-bold uppercase tracking-wider text-[#1A3C2F]">
+                        Mobile Number *
+                      </label>
                       <input
                         required
                         type="tel"
@@ -154,7 +236,7 @@ export default function CheckoutPage() {
                 </div>
 
                 {/* 2. Delivery Address */}
-                <div className="border border-[#E5DFD5] bg-white p-6 sm:p-8 space-y-4">
+                <div className="border border-[#E5DFD5] bg-white p-6 sm:p-8 space-y-4 shadow-xs">
                   <div className="flex items-center gap-3 border-b border-[#E5DFD5] pb-3">
                     <span className="flex h-6 w-6 items-center justify-center bg-[#1A3C2F] text-xs font-bold text-[#FAF7F2]">
                       2
@@ -163,24 +245,28 @@ export default function CheckoutPage() {
                   </div>
 
                   <div>
-                    <label className="text-xs font-bold uppercase tracking-wider text-[#1A3C2F]">Flat / House / Street Address *</label>
+                    <label className="text-xs font-bold uppercase tracking-wider text-[#1A3C2F]">
+                      Flat / House / Street Address *
+                    </label>
                     <input
                       required
                       type="text"
-                      value={address}
-                      onChange={(e) => setAddress(e.target.value)}
-                      placeholder="Door No, Street, Colony"
+                      value={addressLine1}
+                      onChange={(e) => setAddressLine1(e.target.value)}
+                      placeholder="Door No, Street Name, Colony"
                       className="mt-1.5 w-full border border-[#E5DFD5] bg-[#FAF7F2] px-4 py-2.5 text-xs outline-none focus:border-[#1A3C2F]"
                     />
                   </div>
 
                   <div>
-                    <label className="text-xs font-bold uppercase tracking-wider text-[#1A3C2F]">Landmark</label>
+                    <label className="text-xs font-bold uppercase tracking-wider text-[#1A3C2F]">
+                      Landmark / Area (Optional)
+                    </label>
                     <input
                       type="text"
-                      value={landmark}
-                      onChange={(e) => setLandmark(e.target.value)}
-                      placeholder="Near landmark"
+                      value={addressLine2}
+                      onChange={(e) => setAddressLine2(e.target.value)}
+                      placeholder="Near landmark or apartment name"
                       className="mt-1.5 w-full border border-[#E5DFD5] bg-[#FAF7F2] px-4 py-2.5 text-xs outline-none focus:border-[#1A3C2F]"
                     />
                   </div>
@@ -223,7 +309,7 @@ export default function CheckoutPage() {
                 </div>
 
                 {/* 3. Payment Method Selection */}
-                <div className="border border-[#E5DFD5] bg-white p-6 sm:p-8 space-y-6">
+                <div className="border border-[#E5DFD5] bg-white p-6 sm:p-8 space-y-6 shadow-xs">
                   <div className="flex items-center gap-3 border-b border-[#E5DFD5] pb-3">
                     <span className="flex h-6 w-6 items-center justify-center bg-[#1A3C2F] text-xs font-bold text-[#FAF7F2]">
                       3
@@ -232,7 +318,7 @@ export default function CheckoutPage() {
                   </div>
 
                   <div className="grid gap-4 sm:grid-cols-2">
-                    {/* UPI Payment */}
+                    {/* UPI Payment Button */}
                     <button
                       type="button"
                       onClick={() => setPaymentMethod("upi")}
@@ -248,15 +334,15 @@ export default function CheckoutPage() {
                       <div>
                         <div className="flex items-center gap-2">
                           <Smartphone className="h-5 w-5 text-[#1A3C2F]" />
-                          <span className="text-sm font-bold text-[#1A3C2F]">Pay via UPI</span>
+                          <span className="text-sm font-bold text-[#1A3C2F]">Pay via UPI QR</span>
                         </div>
                         <p className="mt-1 text-xs text-[#556B61]">
-                          Instant payment via Google Pay, PhonePe, Paytm, BHIM, or any UPI App.
+                          Google Pay, PhonePe, Paytm, BHIM, or any UPI app.
                         </p>
                       </div>
                     </button>
 
-                    {/* Cash on Delivery */}
+                    {/* Cash on Delivery Button */}
                     <button
                       type="button"
                       onClick={() => setPaymentMethod("cod")}
@@ -278,74 +364,58 @@ export default function CheckoutPage() {
                     </button>
                   </div>
 
-                  {/* UPI Details & QR Container */}
+                  {/* UPI Details & Real QR Section */}
                   {paymentMethod === "upi" && (
                     <div className="border border-[#C5A059]/40 bg-[#FAF7F2] p-5 sm:p-6 space-y-6">
-                      <div>
-                        <p className="text-xs font-bold uppercase tracking-wider text-[#1A3C2F]">Accepted UPI Apps:</p>
-                        <div className="mt-2 flex flex-wrap gap-2">
-                          {["Google Pay", "PhonePe", "Paytm", "BHIM UPI", "Any Bank UPI"].map((app) => (
-                            <span
-                              key={app}
-                              className="border border-[#E5DFD5] bg-white px-3 py-1 text-[11px] font-bold text-[#1A3C2F]"
-                            >
-                              {app}
-                            </span>
-                          ))}
-                        </div>
+                      <div className="bg-white p-4 border border-[#E5DFD5] text-xs text-[#556B61] leading-relaxed">
+                        <strong className="text-[#1A3C2F] flex items-center gap-1.5">
+                          <HelpCircle className="h-4 w-4 text-[#C5A059]" /> How UPI Payment Works:
+                        </strong>
+                        <p className="mt-1">
+                          UPI payments are verified after payment using your 12-digit UTR / transaction reference number.
+                        </p>
                       </div>
 
-                      {/* Mobile Deep Link */}
+                      {/* Mobile App Deep Link */}
                       <div className="block md:hidden space-y-2">
-                        <p className="text-xs font-bold text-[#1A3C2F] uppercase tracking-wider">Pay using UPI App on Mobile:</p>
+                        <p className="text-xs font-bold text-[#1A3C2F] uppercase tracking-wider">
+                          Pay directly with installed UPI App:
+                        </p>
                         <a
                           href={upiDeepLink}
                           className="flex items-center justify-center gap-2 w-full bg-[#1A3C2F] py-3 text-xs font-bold uppercase tracking-wider text-[#FAF7F2] hover:bg-[#122B22] transition"
                         >
-                          <Smartphone className="h-4 w-4" /> Open UPI App to Pay ₹{finalTotal}
+                          <Smartphone className="h-4 w-4 text-[#C5A059]" /> Open App to Pay ₹{finalTotal}
                         </a>
                       </div>
 
-                      {/* QR Code & UPI ID Display */}
-                      <div className="hidden md:flex flex-col sm:flex-row items-center gap-6 border-t border-[#E5DFD5] pt-5">
-                        {/* SVG QR Code */}
-                        <div className="flex flex-col items-center bg-white p-3.5 border border-[#E5DFD5] text-center">
-                          <div className="h-36 w-36 bg-[#FAF7F2] flex flex-col items-center justify-center p-2 border border-[#C5A059]/30">
-                            <svg viewBox="0 0 100 100" className="h-full w-full fill-[#1A3C2F]">
-                              <rect x="0" y="0" width="30" height="30" rx="2" fill="#1A3C2F" />
-                              <rect x="5" y="5" width="20" height="20" rx="1" fill="#FAF7F2" />
-                              <rect x="10" y="10" width="10" height="10" fill="#C5A059" />
-
-                              <rect x="70" y="0" width="30" height="30" rx="2" fill="#1A3C2F" />
-                              <rect x="75" y="5" width="20" height="20" rx="1" fill="#FAF7F2" />
-                              <rect x="80" y="10" width="10" height="10" fill="#1A3C2F" />
-
-                              <rect x="0" y="70" width="30" height="30" rx="2" fill="#1A3C2F" />
-                              <rect x="5" y="75" width="20" height="20" rx="1" fill="#FAF7F2" />
-                              <rect x="10" y="80" width="10" height="10" fill="#1A3C2F" />
-
-                              <rect x="40" y="10" width="20" height="10" fill="#1A3C2F" />
-                              <rect x="35" y="35" width="30" height="30" fill="#1A3C2F" />
-                              <rect x="70" y="45" width="20" height="20" fill="#C5A059" />
-                              <rect x="45" y="75" width="20" height="20" fill="#1A3C2F" />
-                            </svg>
-                            <span className="mt-1 text-[8px] font-bold uppercase tracking-widest text-[#C5A059]">
-                              YUVA NATURALS QR
-                            </span>
-                          </div>
-                          <span className="mt-2 text-[10px] font-bold uppercase tracking-wider text-[#1A3C2F]">Scan QR with Any App</span>
+                      {/* Real Vector QR Code & Official UPI ID */}
+                      <div className="flex flex-col sm:flex-row items-center gap-6 border-t border-b border-[#E5DFD5] py-5">
+                        {/* Real Vector SVG QR Code Container */}
+                        <div className="flex flex-col items-center bg-white p-4 border border-[#E5DFD5] text-center shadow-xs">
+                          <div
+                            className="h-40 w-40 bg-white p-2 border border-[#C5A059]/40 flex items-center justify-center"
+                            dangerouslySetInnerHTML={{ __html: qrSvgMarkup }}
+                          />
+                          <span className="mt-2 text-[10px] font-bold uppercase tracking-widest text-[#1A3C2F]">
+                            Scan QR Code to Pay ₹{finalTotal}
+                          </span>
                         </div>
 
-                        {/* Official UPI ID */}
-                        <div className="flex-1 space-y-3">
-                          <h3 className="text-sm font-bold text-[#1A3C2F] font-serif">Scan QR or Copy Official UPI ID</h3>
+                        {/* Official VPA & Copy Button */}
+                        <div className="flex-1 space-y-3 text-center sm:text-left">
+                          <h3 className="text-sm font-bold text-[#1A3C2F] font-serif">
+                            YUVA NATURALS Official VPA
+                          </h3>
                           <p className="text-xs text-[#556B61] leading-relaxed">
-                            Scan the code above or copy our official VPA to transfer <strong className="text-[#1A3C2F]">₹{finalTotal}</strong> directly.
+                            Scan the QR code with Google Pay, PhonePe, Paytm, or BHIM, or transfer exact amount <strong className="text-[#1A3C2F]">₹{finalTotal}</strong> to our official UPI VPA below.
                           </p>
 
                           <div className="border border-[#E5DFD5] bg-white p-3 flex items-center justify-between gap-3">
                             <div>
-                              <span className="text-[9px] font-bold uppercase text-[#C5A059] tracking-wider">Official UPI ID:</span>
+                              <span className="text-[9px] font-bold uppercase text-[#C5A059] tracking-wider">
+                                Official UPI ID:
+                              </span>
                               <p className="text-xs font-mono font-bold text-[#1A3C2F]">{upiId}</p>
                             </div>
                             <button
@@ -359,7 +429,7 @@ export default function CheckoutPage() {
                                 </>
                               ) : (
                                 <>
-                                  <Copy className="h-3.5 w-3.5" /> Copy UPI ID
+                                  <Copy className="h-3.5 w-3.5" /> Copy ID
                                 </>
                               )}
                             </button>
@@ -367,23 +437,55 @@ export default function CheckoutPage() {
                         </div>
                       </div>
 
+                      {/* UTR Input Requirement */}
+                      <div className="space-y-2 bg-white p-4 border border-[#C5A059]/40">
+                        <label className="text-xs font-bold uppercase tracking-wider text-[#1A3C2F]">
+                          Enter 12-Digit UPI Transaction ID / UTR Number *
+                        </label>
+                        <p className="text-[11px] text-[#7C907C]">
+                          Find the 12-digit UTR reference number in your payment confirmation screen or UPI app statement.
+                        </p>
+                        <input
+                          required={paymentMethod === "upi"}
+                          type="text"
+                          value={utrNumber}
+                          onChange={(e) => setUtrNumber(e.target.value)}
+                          placeholder="e.g. 987654321012"
+                          className="w-full border border-[#E5DFD5] bg-[#FAF7F2] px-4 py-2.5 text-xs font-mono outline-none focus:border-[#1A3C2F]"
+                        />
+                      </div>
+
                       <button
                         type="submit"
+                        disabled={submitting}
                         className="w-full bg-[#1A3C2F] py-3.5 text-xs font-bold uppercase tracking-[0.16em] text-[#FAF7F2] hover:bg-[#122B22] transition flex items-center justify-center gap-2"
                       >
-                        <CheckCircle2 className="h-4 w-4 text-[#C5A059]" /> SUBMIT UPI PAYMENT (₹{finalTotal})
+                        {submitting ? (
+                          "Submitting Order..."
+                        ) : (
+                          <>
+                            <CheckCircle2 className="h-4 w-4 text-[#C5A059]" /> I&apos;VE PAID — SUBMIT UTR
+                          </>
+                        )}
                       </button>
                     </div>
                   )}
 
-                  {/* COD Submission */}
+                  {/* COD Submission Button */}
                   {paymentMethod === "cod" && (
                     <div className="pt-2">
                       <button
                         type="submit"
+                        disabled={submitting}
                         className="w-full bg-[#1A3C2F] py-3.5 text-xs font-bold uppercase tracking-[0.16em] text-[#FAF7F2] hover:bg-[#122B22] transition flex items-center justify-center gap-2"
                       >
-                        <Banknote className="h-4 w-4 text-[#C5A059]" /> PLACE CASH ON DELIVERY ORDER (₹{finalTotal})
+                        {submitting ? (
+                          "Placing Order..."
+                        ) : (
+                          <>
+                            <Banknote className="h-4 w-4 text-[#C5A059]" /> PLACE CASH ON DELIVERY ORDER (₹{finalTotal})
+                          </>
+                        )}
                       </button>
                     </div>
                   )}
@@ -393,10 +495,12 @@ export default function CheckoutPage() {
               {/* Order Summary Sidebar */}
               <div className="border border-[#1A3C2F] bg-[#1A3C2F] p-6 sm:p-8 text-[#FAF7F2] space-y-6 h-fit shadow-xl">
                 <div>
-                  <h2 className="text-xl font-bold font-serif border-b border-white/10 pb-4">Order Summary</h2>
+                  <h2 className="text-xl font-bold font-serif border-b border-white/10 pb-4">
+                    Order Summary
+                  </h2>
 
                   {/* Product List */}
-                  <div className="mt-4 space-y-3">
+                  <div className="mt-4 space-y-3 max-h-[300px] overflow-y-auto pr-1">
                     {cart.map(({ product, quantity }) => (
                       <div key={product.id} className="flex items-center justify-between gap-3 text-xs">
                         <div className="flex items-center gap-3">
@@ -405,7 +509,7 @@ export default function CheckoutPage() {
                           </div>
                           <div>
                             <p className="font-bold text-[#FAF7F2] line-clamp-1">{product.name}</p>
-                            <p className="text-[10px] text-[#7C907C]">Qty: {quantity}</p>
+                            <p className="text-[10px] text-[#7C907C]">Qty: {quantity} | {product.size}</p>
                           </div>
                         </div>
                         <span className="font-bold text-[#C5A059]">₹{product.price * quantity}</span>
@@ -422,7 +526,7 @@ export default function CheckoutPage() {
 
                     {discountAmount > 0 && (
                       <div className="flex justify-between text-emerald-300">
-                        <span>Promo Discount</span>
+                        <span>Promo Discount ({couponCode})</span>
                         <span>-₹{discountAmount}</span>
                       </div>
                     )}
@@ -435,7 +539,7 @@ export default function CheckoutPage() {
                     </div>
 
                     <div className="flex justify-between border-t border-white/10 pt-4 text-base font-bold text-[#FAF7F2]">
-                      <span>Total Amount</span>
+                      <span>Grand Total</span>
                       <span className="text-2xl font-extrabold text-[#C5A059]">₹{finalTotal}</span>
                     </div>
                   </div>
@@ -453,46 +557,64 @@ export default function CheckoutPage() {
             </form>
           </>
         ) : (
-          /* Success Screen View */
+          /* SUCCESS SCREEN VIEW */
           <div className="mx-auto max-w-3xl space-y-8 animate-in fade-in duration-300">
             <div className="border border-[#E5DFD5] bg-[#F3EDE4] p-8 text-center space-y-4 sm:p-12">
               <div className="mx-auto flex h-16 w-16 items-center justify-center bg-[#1A3C2F] text-[#C5A059] shadow-md">
                 <CheckCircle2 className="h-10 w-10" />
               </div>
               <span className="inline-block border border-[#1A3C2F]/20 bg-white px-4 py-1 text-xs font-bold uppercase tracking-[0.22em] text-[#C5A059]">
-                Order Submitted Successfully
+                Order Submitted
               </span>
               <h1 className="text-3xl sm:text-4xl font-serif font-bold text-[#1A3C2F]">
                 Thank You for Your Order
               </h1>
               <p className="text-xs sm:text-sm text-[#3E564A] max-w-lg mx-auto leading-relaxed">
-                Thank you for choosing YUVA NATURALS. Your order has been placed. Our team will verify your payment details and begin dispatching your handcrafted products.
+                Your order has been recorded in our system. A confirmation notification has been dispatched to your email address.
               </p>
             </div>
 
-            {/* Order Details & Tracker */}
-            <div className="border border-[#E5DFD5] bg-white p-6 sm:p-10 space-y-6">
+            {/* Order Details & Status Tracker */}
+            <div className="border border-[#E5DFD5] bg-white p-6 sm:p-10 space-y-6 shadow-xs">
               <div className="grid gap-4 sm:grid-cols-3 border-b border-[#E5DFD5] pb-6 text-center sm:text-left">
                 <div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#C5A059]">Order Reference</span>
-                  <p className="text-base font-extrabold text-[#1A3C2F] font-mono mt-0.5">{orderId}</p>
-                </div>
-                <div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#C5A059]">Payment Status</span>
-                  <p className="mt-0.5 text-xs font-bold text-amber-900 bg-amber-50 px-3 py-1 border border-amber-200 inline-block">
-                    {paymentMethod === "upi" ? "Pending Verification" : "Cash on Delivery"}
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#C5A059]">
+                    Order Reference ID
+                  </span>
+                  <p className="text-base font-extrabold text-[#1A3C2F] font-mono mt-0.5">
+                    {submittedOrder.orderId}
                   </p>
                 </div>
                 <div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#C5A059]">Estimated Delivery</span>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#C5A059]">
+                    Payment Status
+                  </span>
+                  <p className="mt-0.5 text-xs font-bold text-amber-900 bg-amber-50 px-3 py-1 border border-amber-200 inline-block">
+                    {submittedOrder.paymentStatus}
+                  </p>
+                </div>
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#C5A059]">
+                    Estimated Delivery
+                  </span>
                   <p className="text-xs font-bold text-[#1A3C2F] mt-0.5">3–5 Business Days</p>
                 </div>
               </div>
 
+              {/* Submitted Details Notice */}
+              {submittedOrder.utrNumber && (
+                <div className="bg-[#FAF7F2] p-4 border border-[#C5A059]/40 text-xs text-[#1A3C2F] space-y-1">
+                  <p className="font-bold">Submitted UTR Reference Number:</p>
+                  <p className="font-mono text-[#C5A059] font-bold">{submittedOrder.utrNumber}</p>
+                </div>
+              )}
+
               {/* Order Status Tracker */}
               <div className="space-y-3">
-                <h3 className="text-xs font-bold uppercase tracking-widest text-[#1A3C2F] font-serif">Order Status Tracker</h3>
-                <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
+                <h3 className="text-xs font-bold uppercase tracking-widest text-[#1A3C2F] font-serif">
+                  Order Fulfillment Tracker
+                </h3>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
                   {orderSteps.map((step) => (
                     <div
                       key={step.label}
@@ -514,26 +636,25 @@ export default function CheckoutPage() {
               <div className="bg-[#FAF7F2] p-4 border border-[#C5A059]/30 flex items-start gap-3 text-xs text-[#556B61] leading-relaxed">
                 <Clock className="h-5 w-5 text-[#C5A059] flex-shrink-0 mt-0.5" />
                 <div>
-                  <strong className="text-[#1A3C2F]">Verification Notice:</strong> For UPI payments, our team verifies transaction IDs within 1–2 hours. Your order status will automatically update to <strong className="text-[#1A3C2F]">Confirmed</strong> once verified.
+                  <strong className="text-[#1A3C2F]">Payment Verification Notice:</strong> For UPI payments, our admin team verifies submitted UTR numbers. Once verified, your status updates to <strong className="text-[#1A3C2F]">Confirmed</strong> and dispatch begins.
                 </div>
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4 pt-4 border-t border-[#E5DFD5]">
-                <Link href="/shop" className="flex-1" onClick={() => setIsSuccess(false)}>
+                <Link href="/shop" className="flex-1" onClick={() => setSubmittedOrder(null)}>
                   <button className="w-full bg-[#1A3C2F] py-3.5 text-xs font-bold uppercase tracking-wider text-[#FAF7F2] hover:bg-[#122B22] transition flex items-center justify-center gap-2">
                     Continue Shopping <ArrowRight className="h-4 w-4" />
+                  </button>
+                </Link>
+                <Link href="/admin/orders" className="flex-1">
+                  <button className="w-full bg-[#F3EDE4] border border-[#1A3C2F] py-3.5 text-xs font-bold uppercase tracking-wider text-[#1A3C2F] hover:bg-[#1A3C2F] hover:text-[#FAF7F2] transition flex items-center justify-center gap-2">
+                    View in Admin Console
                   </button>
                 </Link>
               </div>
             </div>
           </div>
         )}
-      </main>
-    </PageShell>
-  );
-}
-
-
       </main>
     </PageShell>
   );

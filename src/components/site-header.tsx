@@ -20,6 +20,7 @@ export function SiteHeader() {
     { label: "Lip Care", href: "/shop?category=Lip Care" },
     { label: "Cookies", href: "/cookies" },
     { label: "Contact", href: "/contact" },
+    { label: "Admin", href: "/admin/orders" },
   ];
 
   return (

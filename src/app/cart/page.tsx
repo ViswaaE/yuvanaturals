@@ -221,6 +221,3 @@ export default function CartPage() {
     </PageShell>
   );
 }
-eShell>
-  );
-}
