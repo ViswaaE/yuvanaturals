@@ -3,9 +3,29 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, ShoppingBag, Trash2, Tag, ShieldCheck, Check, ShoppingCart, RotateCcw } from "lucide-react";
+import {
+  ArrowRight,
+  ShoppingBag,
+  Trash2,
+  Tag,
+  ShieldCheck,
+  Check,
+  ShoppingCart,
+  MessageCircle,
+  ChevronDown,
+  ChevronUp,
+  AlertCircle,
+  User,
+  Phone,
+  MapPin,
+} from "lucide-react";
 import { PageShell } from "@/components/page-shell";
 import { useCart } from "@/context/cart-context";
+import {
+  buildCartWhatsAppMessage,
+  openWhatsApp,
+  type CustomerDetails,
+} from "@/lib/whatsapp";
 
 export default function CartPage() {
   const {
@@ -25,6 +45,15 @@ export default function CartPage() {
   const [inputCoupon, setInputCoupon] = useState("");
   const [couponError, setCouponError] = useState(false);
 
+  // WhatsApp ordering state
+  const [waFormOpen, setWaFormOpen] = useState(false);
+  const [waName, setWaName] = useState("");
+  const [waMobile, setWaMobile] = useState("");
+  const [waAddress, setWaAddress] = useState("");
+  const [waPincode, setWaPincode] = useState("");
+  const [waNote, setWaNote] = useState("");
+  const [waError, setWaError] = useState("");
+
   const handleApplyCoupon = (e: React.FormEvent) => {
     e.preventDefault();
     if (inputCoupon.trim()) {
@@ -34,6 +63,44 @@ export default function CartPage() {
         setTimeout(() => setCouponError(false), 3000);
       }
     }
+  };
+
+  const handleWhatsAppOrder = (e: React.FormEvent) => {
+    e.preventDefault();
+    setWaError("");
+
+    if (cart.length === 0) {
+      setWaError("Your cart is empty. Please add items before ordering.");
+      return;
+    }
+    if (!waName.trim()) {
+      setWaError("Please enter your name.");
+      return;
+    }
+    if (!waMobile.trim() || !/^\+?[0-9\s\-]{7,15}$/.test(waMobile.trim())) {
+      setWaError("Please enter a valid mobile number.");
+      return;
+    }
+
+    const customer: CustomerDetails = {
+      name: waName.trim(),
+      mobile: waMobile.trim(),
+      address: waAddress.trim() || undefined,
+      pincode: waPincode.trim() || undefined,
+      deliveryNote: waNote.trim() || undefined,
+    };
+
+    const message = buildCartWhatsAppMessage(cart, rawSubtotal, customer);
+    openWhatsApp(message);
+  };
+
+  const handleWaButtonClick = () => {
+    if (cart.length === 0) {
+      setWaError("Your cart is empty. Please add items before ordering.");
+      return;
+    }
+    setWaError("");
+    setWaFormOpen((prev) => !prev);
   };
 
   return (
@@ -58,7 +125,8 @@ export default function CartPage() {
             <ShoppingCart className="h-12 w-12 text-[#C5A059] mx-auto opacity-70" />
             <h2 className="text-2xl font-serif font-bold">Your Cart is Currently Empty</h2>
             <p className="text-xs text-[#556B61] max-w-sm mx-auto leading-relaxed">
-              Explore our handcrafted cold-processed soaps, hair cleansers, and traditional grain cookies.
+              Explore our handcrafted cold-processed soaps, hair cleansers, and traditional grain
+              cookies.
             </p>
             <div className="pt-2">
               <Link
@@ -75,7 +143,9 @@ export default function CartPage() {
             {/* Left: Cart Items List */}
             <div className="border border-[#E5DFD5] bg-white p-6 sm:p-8 space-y-6">
               <div className="flex items-center justify-between border-b border-[#E5DFD5] pb-4">
-                <h2 className="text-xl font-bold text-[#1A3C2F] font-serif">Shopping Bag ({cart.reduce((a, c) => a + c.quantity, 0)} Items)</h2>
+                <h2 className="text-xl font-bold text-[#1A3C2F] font-serif">
+                  Shopping Bag ({cart.reduce((a, c) => a + c.quantity, 0)} Items)
+                </h2>
                 <Link href="/shop" className="text-xs font-semibold text-[#C5A059] hover:underline">
                   Continue Shopping
                 </Link>
@@ -95,7 +165,9 @@ export default function CartPage() {
                         <span className="text-[9px] font-bold uppercase tracking-widest text-[#C5A059]">
                           {product.category} &bull; {product.size || "125g"}
                         </span>
-                        <h3 className="text-xs sm:text-sm font-bold text-[#1A3C2F] line-clamp-1">{product.name}</h3>
+                        <h3 className="text-xs sm:text-sm font-bold text-[#1A3C2F] line-clamp-1">
+                          {product.name}
+                        </h3>
                         <p className="text-xs text-[#7C907C] mt-0.5">₹{product.price} each</p>
                       </div>
                     </div>
@@ -118,7 +190,9 @@ export default function CartPage() {
                         </button>
                       </div>
 
-                      <span className="text-sm font-bold text-[#1A3C2F]">₹{product.price * quantity}</span>
+                      <span className="text-sm font-bold text-[#1A3C2F]">
+                        ₹{product.price * quantity}
+                      </span>
 
                       <button
                         onClick={() => removeFromCart(product.id)}
@@ -134,7 +208,9 @@ export default function CartPage() {
 
               {/* Coupon Section */}
               <div className="border-t border-[#E5DFD5] pt-6 space-y-3">
-                <p className="text-xs font-bold uppercase tracking-wider text-[#1A3C2F]">Have a Promo or Gift Code?</p>
+                <p className="text-xs font-bold uppercase tracking-wider text-[#1A3C2F]">
+                  Have a Promo or Gift Code?
+                </p>
                 <form onSubmit={handleApplyCoupon} className="flex gap-3 max-w-md">
                   <div className="relative flex-1">
                     <Tag className="absolute left-3.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#C5A059]" />
@@ -157,7 +233,8 @@ export default function CartPage() {
                 {couponApplied && (
                   <div className="flex items-center justify-between bg-emerald-50 border border-emerald-200 p-2.5 text-xs text-emerald-800">
                     <span className="font-semibold flex items-center gap-1.5">
-                      <Check className="h-4 w-4" /> Promo Code {couponCode} Applied! (15% Savings: ₹{discountAmount})
+                      <Check className="h-4 w-4" /> Promo Code {couponCode} Applied! (15% Savings:
+                      ₹{discountAmount})
                     </span>
                     <button onClick={removeCoupon} className="text-xs text-red-600 underline">
                       Remove
@@ -166,7 +243,9 @@ export default function CartPage() {
                 )}
 
                 {couponError && (
-                  <p className="text-xs text-red-600 font-semibold">Invalid promo code. Please try YUVA15.</p>
+                  <p className="text-xs text-red-600 font-semibold">
+                    Invalid promo code. Please try YUVA15.
+                  </p>
                 )}
               </div>
             </div>
@@ -174,7 +253,9 @@ export default function CartPage() {
             {/* Right: Summary Box */}
             <div className="border border-[#1A3C2F] bg-[#1A3C2F] p-6 sm:p-8 text-[#FAF7F2] flex flex-col justify-between space-y-6 shadow-lg">
               <div className="space-y-4">
-                <h2 className="text-2xl font-bold font-serif border-b border-white/10 pb-4">Order Summary</h2>
+                <h2 className="text-2xl font-bold font-serif border-b border-white/10 pb-4">
+                  Order Summary
+                </h2>
 
                 <div className="space-y-3 text-xs text-[#FAF7F2]/80">
                   <div className="flex justify-between">
@@ -204,14 +285,155 @@ export default function CartPage() {
               </div>
 
               <div className="space-y-4 pt-4 border-t border-white/10">
-                <Link href="/checkout">
-                  <button className="w-full bg-[#C5A059] py-4 text-xs font-bold uppercase tracking-[0.16em] text-[#1A3C2F] hover:bg-white transition shadow-md flex items-center justify-center gap-2">
-                    <ShoppingBag className="h-4 w-4" /> PROCEED TO CHECKOUT &rarr;
-                  </button>
+                <Link
+                  id="cart-proceed-to-checkout"
+                  href="/checkout"
+                  className="w-full bg-[#C5A059] py-4 text-xs font-bold uppercase tracking-[0.16em] text-[#1A3C2F] hover:bg-white transition shadow-md flex items-center justify-center gap-2"
+                >
+                  <ShoppingBag className="h-4 w-4" /> PROCEED TO CHECKOUT &rarr;
                 </Link>
 
+                {/* Divider */}
+                <div className="flex items-center gap-3 text-[10px] text-white/40 uppercase tracking-widest font-semibold">
+                  <span className="flex-1 border-t border-white/10" />
+                  or order via WhatsApp
+                  <span className="flex-1 border-t border-white/10" />
+                </div>
+
+                {/* WhatsApp Order Button */}
+                <button
+                  id="cart-order-via-whatsapp"
+                  type="button"
+                  onClick={handleWaButtonClick}
+                  className="w-full flex items-center justify-center gap-2 py-4 text-xs font-bold uppercase tracking-[0.16em] text-white transition shadow-md"
+                  style={{ backgroundColor: "#25D366" }}
+                  onMouseEnter={(e) =>
+                    ((e.currentTarget as HTMLButtonElement).style.backgroundColor = "#1DA851")
+                  }
+                  onMouseLeave={(e) =>
+                    ((e.currentTarget as HTMLButtonElement).style.backgroundColor = "#25D366")
+                  }
+                >
+                  <MessageCircle className="h-4 w-4" />
+                  ORDER VIA WHATSAPP
+                  {waFormOpen ? (
+                    <ChevronUp className="h-3.5 w-3.5 ml-1 opacity-70" />
+                  ) : (
+                    <ChevronDown className="h-3.5 w-3.5 ml-1 opacity-70" />
+                  )}
+                </button>
+
+                {/* Empty-cart inline error (shown even when form is closed) */}
+                {waError && !waFormOpen && (
+                  <div className="flex items-center gap-2 bg-red-900/30 border border-red-400/40 p-3 text-xs text-red-300 rounded-sm">
+                    <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
+                    {waError}
+                  </div>
+                )}
+
+                {/* Collapsible customer details form */}
+                {waFormOpen && (
+                  <form
+                    onSubmit={handleWhatsAppOrder}
+                    className="space-y-3 border border-white/10 bg-white/5 p-4 animate-in fade-in slide-in-from-top-2 duration-200"
+                  >
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-[#C5A059]">
+                      Your Details (required*)
+                    </p>
+
+                    {waError && (
+                      <div className="flex items-center gap-2 bg-red-900/30 border border-red-400/40 p-2.5 text-xs text-red-300">
+                        <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
+                        {waError}
+                      </div>
+                    )}
+
+                    {/* Name */}
+                    <div className="relative">
+                      <User className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#C5A059]" />
+                      <input
+                        id="wa-name"
+                        type="text"
+                        required
+                        value={waName}
+                        onChange={(e) => setWaName(e.target.value)}
+                        placeholder="Your Name *"
+                        className="w-full bg-white/10 border border-white/20 text-white placeholder:text-white/40 pl-9 pr-3 py-2.5 text-xs outline-none focus:border-[#25D366]"
+                      />
+                    </div>
+
+                    {/* Mobile */}
+                    <div className="relative">
+                      <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#C5A059]" />
+                      <input
+                        id="wa-mobile"
+                        type="tel"
+                        required
+                        value={waMobile}
+                        onChange={(e) => setWaMobile(e.target.value)}
+                        placeholder="Mobile Number * (e.g. 9876543210)"
+                        className="w-full bg-white/10 border border-white/20 text-white placeholder:text-white/40 pl-9 pr-3 py-2.5 text-xs outline-none focus:border-[#25D366]"
+                      />
+                    </div>
+
+                    {/* Address */}
+                    <div className="relative">
+                      <MapPin className="absolute left-3 top-3 h-3.5 w-3.5 text-[#C5A059]" />
+                      <textarea
+                        id="wa-address"
+                        rows={2}
+                        value={waAddress}
+                        onChange={(e) => setWaAddress(e.target.value)}
+                        placeholder="Delivery Address (optional)"
+                        className="w-full bg-white/10 border border-white/20 text-white placeholder:text-white/40 pl-9 pr-3 py-2.5 text-xs outline-none focus:border-[#25D366] resize-none"
+                      />
+                    </div>
+
+                    {/* Pincode + Note — side by side on wide screens */}
+                    <div className="grid grid-cols-2 gap-3">
+                      <input
+                        id="wa-pincode"
+                        type="text"
+                        value={waPincode}
+                        onChange={(e) => setWaPincode(e.target.value)}
+                        placeholder="Pincode (optional)"
+                        className="w-full bg-white/10 border border-white/20 text-white placeholder:text-white/40 px-3 py-2.5 text-xs outline-none focus:border-[#25D366]"
+                      />
+                      <input
+                        id="wa-delivery-note"
+                        type="text"
+                        value={waNote}
+                        onChange={(e) => setWaNote(e.target.value)}
+                        placeholder="Delivery note (optional)"
+                        className="w-full bg-white/10 border border-white/20 text-white placeholder:text-white/40 px-3 py-2.5 text-xs outline-none focus:border-[#25D366]"
+                      />
+                    </div>
+
+                    <button
+                      id="cart-whatsapp-send"
+                      type="submit"
+                      className="w-full flex items-center justify-center gap-2 py-3.5 text-xs font-bold uppercase tracking-[0.16em] text-white transition"
+                      style={{ backgroundColor: "#25D366" }}
+                      onMouseEnter={(e) =>
+                        ((e.currentTarget as HTMLButtonElement).style.backgroundColor = "#1DA851")
+                      }
+                      onMouseLeave={(e) =>
+                        ((e.currentTarget as HTMLButtonElement).style.backgroundColor = "#25D366")
+                      }
+                    >
+                      <MessageCircle className="h-4 w-4" /> OPEN WHATSAPP TO SEND ORDER
+                    </button>
+
+                    <p className="text-[10px] text-white/40 text-center leading-relaxed">
+                      WhatsApp will open with your order. Review the message and tap{" "}
+                      <strong className="text-white/60">Send</strong> to submit your enquiry.
+                    </p>
+                  </form>
+                )}
+
                 <div className="flex items-center justify-center gap-2 text-[11px] text-[#FAF7F2]/70">
-                  <ShieldCheck className="h-4 w-4 text-[#C5A059]" /> 100% Secure Checkout &amp; Botanical Guarantee
+                  <ShieldCheck className="h-4 w-4 text-[#C5A059]" /> 100% Secure Checkout &amp;
+                  Botanical Guarantee
                 </div>
               </div>
             </div>

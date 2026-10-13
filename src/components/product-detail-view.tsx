@@ -4,10 +4,11 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Star, ShoppingBag, Heart, Check, ShieldCheck, Sparkles, Truck, RefreshCw, Leaf, ZoomIn, Zap } from "lucide-react";
+import { Star, ShoppingBag, Heart, Check, ShieldCheck, Sparkles, ZoomIn, Zap, MessageCircle } from "lucide-react";
 import type { Product } from "@/types/product";
 import { ProductCard } from "@/components/product-card";
 import { useCart } from "@/context/cart-context";
+import { buildProductWhatsAppMessage, openWhatsApp } from "@/lib/whatsapp";
 
 export function ProductDetailView({ product, relatedProducts }: { product: Product; relatedProducts: Product[] }) {
   const router = useRouter();
@@ -31,6 +32,15 @@ export function ProductDetailView({ product, relatedProducts }: { product: Produ
   const handleBuyNow = () => {
     addToCart(product, quantity);
     router.push("/checkout");
+  };
+
+  const handleOrderOnWhatsApp = () => {
+    const pageUrl =
+      typeof window !== "undefined"
+        ? `${window.location.origin}/product/${product.slug}`
+        : undefined;
+    const message = buildProductWhatsAppMessage(product, quantity, pageUrl);
+    openWhatsApp(message);
   };
 
   return (
@@ -196,6 +206,25 @@ export function ProductDetailView({ product, relatedProducts }: { product: Produ
                 <Zap className="h-4 w-4" /> Buy Now
               </button>
 
+              {/* WhatsApp single-product order */}
+              <button
+                id="pdp-order-on-whatsapp"
+                onClick={handleOrderOnWhatsApp}
+                className="flex items-center justify-center gap-2 px-5 py-3.5 text-xs font-bold uppercase tracking-[0.16em] text-white transition"
+                style={{ backgroundColor: "#25D366" }}
+                onMouseEnter={(e) =>
+                  ((e.currentTarget as HTMLButtonElement).style.backgroundColor = "#1DA851")
+                }
+                onMouseLeave={(e) =>
+                  ((e.currentTarget as HTMLButtonElement).style.backgroundColor = "#25D366")
+                }
+                title="Order this product via WhatsApp"
+              >
+                <MessageCircle className="h-4 w-4" />
+                <span className="hidden sm:inline">ORDER ON WHATSAPP</span>
+                <span className="sm:hidden">WhatsApp</span>
+              </button>
+
               <button
                 onClick={() => setIsWishlisted(!isWishlisted)}
                 className={`border p-3.5 transition ${
@@ -219,16 +248,18 @@ export function ProductDetailView({ product, relatedProducts }: { product: Produ
       {/* Tabs Section: Description, Ingredients, Benefits, Directions, Reviews */}
       <section className="bg-white border border-[#E5DFD5] p-6 sm:p-10 space-y-6">
         <div className="flex gap-2 overflow-x-auto border-b border-[#E5DFD5] pb-3">
-          {[
-            { id: "description", label: "Description" },
-            { id: "ingredients", label: "Ingredients" },
-            { id: "benefits", label: "Benefits" },
-            { id: "directions", label: isCookie ? "Storage & Serving" : "How to Use" },
-            { id: "reviews", label: `Reviews (${product.customerReviews?.length || product.reviews})` },
-          ].map((tab) => (
+          {(
+            [
+              { id: "description", label: "Description" },
+              { id: "ingredients", label: "Ingredients" },
+              { id: "benefits", label: "Benefits" },
+              { id: "directions", label: isCookie ? "Storage & Serving" : "How to Use" },
+              { id: "reviews", label: `Reviews (${product.customerReviews?.length || product.reviews})` },
+            ] as const
+          ).map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
+              onClick={() => setActiveTab(tab.id)}
               className={`whitespace-nowrap px-4 py-2.5 text-xs font-bold uppercase tracking-[0.14em] transition ${
                 activeTab === tab.id
                   ? "bg-[#1A3C2F] text-[#FAF7F2]"
