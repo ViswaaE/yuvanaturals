@@ -5,19 +5,19 @@ import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowRight,
-  ShoppingBag,
   Trash2,
   Tag,
   ShieldCheck,
   Check,
   ShoppingCart,
   MessageCircle,
-  ChevronDown,
-  ChevronUp,
   AlertCircle,
   User,
   Phone,
   MapPin,
+  Hash,
+  FileText,
+  Info,
 } from "lucide-react";
 import { PageShell } from "@/components/page-shell";
 import { useCart } from "@/context/cart-context";
@@ -46,13 +46,13 @@ export default function CartPage() {
   const [couponError, setCouponError] = useState(false);
 
   // WhatsApp ordering state
-  const [waFormOpen, setWaFormOpen] = useState(false);
   const [waName, setWaName] = useState("");
   const [waMobile, setWaMobile] = useState("");
   const [waAddress, setWaAddress] = useState("");
   const [waPincode, setWaPincode] = useState("");
   const [waNote, setWaNote] = useState("");
   const [waError, setWaError] = useState("");
+  const [waFallback, setWaFallback] = useState(false);
 
   const handleApplyCoupon = (e: React.FormEvent) => {
     e.preventDefault();
@@ -68,6 +68,7 @@ export default function CartPage() {
   const handleWhatsAppOrder = (e: React.FormEvent) => {
     e.preventDefault();
     setWaError("");
+    setWaFallback(false);
 
     if (cart.length === 0) {
       setWaError("Your cart is empty. Please add items before ordering.");
@@ -78,7 +79,7 @@ export default function CartPage() {
       return;
     }
     if (!waMobile.trim() || !/^\+?[0-9\s\-]{7,15}$/.test(waMobile.trim())) {
-      setWaError("Please enter a valid mobile number.");
+      setWaError("Please enter a valid mobile number (7–15 digits).");
       return;
     }
 
@@ -90,17 +91,16 @@ export default function CartPage() {
       deliveryNote: waNote.trim() || undefined,
     };
 
-    const message = buildCartWhatsAppMessage(cart, rawSubtotal, customer);
-    openWhatsApp(message);
-  };
-
-  const handleWaButtonClick = () => {
-    if (cart.length === 0) {
-      setWaError("Your cart is empty. Please add items before ordering.");
-      return;
+    try {
+      const message = buildCartWhatsAppMessage(cart, rawSubtotal, customer);
+      openWhatsApp(message);
+      // Show fallback tip briefly so the user knows what to do if WA doesn't open
+      setWaFallback(true);
+    } catch {
+      setWaError(
+        "Could not open WhatsApp. Please ensure WhatsApp is installed or try on a device with WhatsApp."
+      );
     }
-    setWaError("");
-    setWaFormOpen((prev) => !prev);
   };
 
   return (
@@ -115,7 +115,7 @@ export default function CartPage() {
             Selected Skincare &amp; Wellness Essentials
           </h1>
           <p className="text-xs sm:text-sm text-[#556B61] max-w-md mx-auto">
-            Review your artisanal bath bars, serums, and promotional discounts.
+            Review your items, then place your order directly via WhatsApp.
           </p>
         </section>
 
@@ -140,7 +140,7 @@ export default function CartPage() {
         ) : (
           /* Cart Main Grid */
           <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
-            {/* Left: Cart Items List */}
+            {/* ─── Left: Cart Items ─── */}
             <div className="border border-[#E5DFD5] bg-white p-6 sm:p-8 space-y-6">
               <div className="flex items-center justify-between border-b border-[#E5DFD5] pb-4">
                 <h2 className="text-xl font-bold text-[#1A3C2F] font-serif">
@@ -151,6 +151,7 @@ export default function CartPage() {
                 </Link>
               </div>
 
+              {/* Cart Items */}
               <div className="space-y-4">
                 {cart.map(({ product, quantity }) => (
                   <div
@@ -159,7 +160,12 @@ export default function CartPage() {
                   >
                     <div className="flex items-center gap-4 w-full sm:w-auto">
                       <div className="relative h-20 w-20 flex-shrink-0 bg-white border border-[#E5DFD5]">
-                        <Image src={product.image} alt={product.name} fill className="object-cover" />
+                        <Image
+                          src={product.image}
+                          alt={product.name}
+                          fill
+                          className="object-cover"
+                        />
                       </div>
                       <div>
                         <span className="text-[9px] font-bold uppercase tracking-widest text-[#C5A059]">
@@ -173,11 +179,12 @@ export default function CartPage() {
                     </div>
 
                     <div className="flex items-center justify-between w-full sm:w-auto gap-6 border-t sm:border-t-0 pt-3 sm:pt-0 border-[#E5DFD5]">
-                      {/* Quantity Modifier */}
+                      {/* Quantity Controls */}
                       <div className="flex items-center border border-[#1A3C2F]/20 bg-white px-2.5 py-1">
                         <button
                           onClick={() => updateQuantity(product.id, quantity - 1)}
                           className="px-2 font-bold text-[#1A3C2F] text-xs"
+                          aria-label="Decrease quantity"
                         >
                           -
                         </button>
@@ -185,6 +192,7 @@ export default function CartPage() {
                         <button
                           onClick={() => updateQuantity(product.id, quantity + 1)}
                           className="px-2 font-bold text-[#1A3C2F] text-xs"
+                          aria-label="Increase quantity"
                         >
                           +
                         </button>
@@ -197,7 +205,7 @@ export default function CartPage() {
                       <button
                         onClick={() => removeFromCart(product.id)}
                         className="text-[#7C907C] hover:text-red-600 transition"
-                        aria-label="Remove item"
+                        aria-label={`Remove ${product.name}`}
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>
@@ -206,7 +214,7 @@ export default function CartPage() {
                 ))}
               </div>
 
-              {/* Coupon Section */}
+              {/* Promo Code */}
               <div className="border-t border-[#E5DFD5] pt-6 space-y-3">
                 <p className="text-xs font-bold uppercase tracking-wider text-[#1A3C2F]">
                   Have a Promo or Gift Code?
@@ -250,8 +258,10 @@ export default function CartPage() {
               </div>
             </div>
 
-            {/* Right: Summary Box */}
-            <div className="border border-[#1A3C2F] bg-[#1A3C2F] p-6 sm:p-8 text-[#FAF7F2] flex flex-col justify-between space-y-6 shadow-lg">
+            {/* ─── Right: Order Summary + WhatsApp Form ─── */}
+            <div className="border border-[#1A3C2F] bg-[#1A3C2F] p-6 sm:p-8 text-[#FAF7F2] flex flex-col space-y-6 shadow-lg">
+
+              {/* Order Totals */}
               <div className="space-y-4">
                 <h2 className="text-2xl font-bold font-serif border-b border-white/10 pb-4">
                   Order Summary
@@ -278,34 +288,131 @@ export default function CartPage() {
                   </div>
 
                   <div className="flex justify-between border-t border-white/10 pt-4 text-base font-bold text-[#FAF7F2]">
-                    <span>Total Payable</span>
+                    <span>Estimated Total</span>
                     <span className="text-2xl font-extrabold text-[#C5A059]">₹{finalTotal}</span>
                   </div>
                 </div>
+
+                {/* How-it-works note */}
+                <div className="flex items-start gap-2.5 bg-white/5 border border-white/10 p-3 text-[11px] text-[#FAF7F2]/70 leading-relaxed">
+                  <Info className="h-3.5 w-3.5 text-[#C5A059] flex-shrink-0 mt-0.5" />
+                  <span>
+                    We confirm orders via WhatsApp. Final shipping charges and payment details will
+                    be shared by our team after you send the order.
+                  </span>
+                </div>
               </div>
 
-              <div className="space-y-4 pt-4 border-t border-white/10">
-                <Link
-                  id="cart-proceed-to-checkout"
-                  href="/checkout"
-                  className="w-full bg-[#C5A059] py-4 text-xs font-bold uppercase tracking-[0.16em] text-[#1A3C2F] hover:bg-white transition shadow-md flex items-center justify-center gap-2"
-                >
-                  <ShoppingBag className="h-4 w-4" /> PROCEED TO CHECKOUT &rarr;
-                </Link>
-
-                {/* Divider */}
-                <div className="flex items-center gap-3 text-[10px] text-white/40 uppercase tracking-widest font-semibold">
-                  <span className="flex-1 border-t border-white/10" />
-                  or order via WhatsApp
-                  <span className="flex-1 border-t border-white/10" />
+              {/* WhatsApp Order Form — always visible as primary action */}
+              <form
+                onSubmit={handleWhatsAppOrder}
+                className="space-y-4 border-t border-white/10 pt-6"
+                noValidate
+              >
+                <div>
+                  <p className="text-sm font-bold font-serif text-[#FAF7F2] mb-0.5">
+                    Your Details
+                  </p>
+                  <p className="text-[10px] text-white/50 uppercase tracking-widest">
+                    Name &amp; mobile are required
+                  </p>
                 </div>
 
-                {/* WhatsApp Order Button */}
+                {/* Validation / fallback messages */}
+                {waError && (
+                  <div
+                    role="alert"
+                    className="flex items-start gap-2 bg-red-900/30 border border-red-400/40 p-3 text-xs text-red-300"
+                  >
+                    <AlertCircle className="h-3.5 w-3.5 flex-shrink-0 mt-0.5" />
+                    {waError}
+                  </div>
+                )}
+
+                {waFallback && !waError && (
+                  <div
+                    role="status"
+                    className="flex items-start gap-2 bg-emerald-900/30 border border-emerald-400/30 p-3 text-xs text-emerald-300"
+                  >
+                    <MessageCircle className="h-3.5 w-3.5 flex-shrink-0 mt-0.5" />
+                    WhatsApp opened! Review your order message and tap{" "}
+                    <strong className="text-white">Send</strong> to place the enquiry. If it did not
+                    open, please ensure WhatsApp is installed on this device.
+                  </div>
+                )}
+
+                {/* Name */}
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#C5A059]" />
+                  <input
+                    id="wa-name"
+                    type="text"
+                    required
+                    value={waName}
+                    onChange={(e) => setWaName(e.target.value)}
+                    placeholder="Your Full Name *"
+                    className="w-full bg-white/10 border border-white/20 text-white placeholder:text-white/40 pl-9 pr-3 py-2.5 text-xs outline-none focus:border-[#25D366] transition"
+                  />
+                </div>
+
+                {/* Mobile */}
+                <div className="relative">
+                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#C5A059]" />
+                  <input
+                    id="wa-mobile"
+                    type="tel"
+                    required
+                    value={waMobile}
+                    onChange={(e) => setWaMobile(e.target.value)}
+                    placeholder="Mobile Number * (e.g. 9876543210)"
+                    className="w-full bg-white/10 border border-white/20 text-white placeholder:text-white/40 pl-9 pr-3 py-2.5 text-xs outline-none focus:border-[#25D366] transition"
+                  />
+                </div>
+
+                {/* Delivery Address */}
+                <div className="relative">
+                  <MapPin className="absolute left-3 top-3 h-3.5 w-3.5 text-[#C5A059]" />
+                  <textarea
+                    id="wa-address"
+                    rows={2}
+                    value={waAddress}
+                    onChange={(e) => setWaAddress(e.target.value)}
+                    placeholder="Full Delivery Address (optional)"
+                    className="w-full bg-white/10 border border-white/20 text-white placeholder:text-white/40 pl-9 pr-3 py-2.5 text-xs outline-none focus:border-[#25D366] resize-none transition"
+                  />
+                </div>
+
+                {/* Pincode + Delivery Note side by side */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="relative">
+                    <Hash className="absolute left-3 top-1/2 -translate-y-1/2 h-3 w-3 text-[#C5A059]" />
+                    <input
+                      id="wa-pincode"
+                      type="text"
+                      value={waPincode}
+                      onChange={(e) => setWaPincode(e.target.value)}
+                      placeholder="Pincode (optional)"
+                      className="w-full bg-white/10 border border-white/20 text-white placeholder:text-white/40 pl-8 pr-3 py-2.5 text-xs outline-none focus:border-[#25D366] transition"
+                    />
+                  </div>
+                  <div className="relative">
+                    <FileText className="absolute left-3 top-1/2 -translate-y-1/2 h-3 w-3 text-[#C5A059]" />
+                    <input
+                      id="wa-delivery-note"
+                      type="text"
+                      value={waNote}
+                      onChange={(e) => setWaNote(e.target.value)}
+                      placeholder="Delivery note (optional)"
+                      className="w-full bg-white/10 border border-white/20 text-white placeholder:text-white/40 pl-8 pr-3 py-2.5 text-xs outline-none focus:border-[#25D366] transition"
+                    />
+                  </div>
+                </div>
+
+                {/* Primary CTA */}
                 <button
                   id="cart-order-via-whatsapp"
-                  type="button"
-                  onClick={handleWaButtonClick}
-                  className="w-full flex items-center justify-center gap-2 py-4 text-xs font-bold uppercase tracking-[0.16em] text-white transition shadow-md"
+                  type="submit"
+                  className="w-full flex items-center justify-center gap-2.5 py-4 text-sm font-bold uppercase tracking-[0.16em] text-white shadow-lg transition-colors"
                   style={{ backgroundColor: "#25D366" }}
                   onMouseEnter={(e) =>
                     ((e.currentTarget as HTMLButtonElement).style.backgroundColor = "#1DA851")
@@ -314,127 +421,21 @@ export default function CartPage() {
                     ((e.currentTarget as HTMLButtonElement).style.backgroundColor = "#25D366")
                   }
                 >
-                  <MessageCircle className="h-4 w-4" />
+                  <MessageCircle className="h-5 w-5" />
                   ORDER VIA WHATSAPP
-                  {waFormOpen ? (
-                    <ChevronUp className="h-3.5 w-3.5 ml-1 opacity-70" />
-                  ) : (
-                    <ChevronDown className="h-3.5 w-3.5 ml-1 opacity-70" />
-                  )}
                 </button>
 
-                {/* Empty-cart inline error (shown even when form is closed) */}
-                {waError && !waFormOpen && (
-                  <div className="flex items-center gap-2 bg-red-900/30 border border-red-400/40 p-3 text-xs text-red-300 rounded-sm">
-                    <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
-                    {waError}
-                  </div>
-                )}
+                <p className="text-[10px] text-white/40 text-center leading-relaxed">
+                  WhatsApp will open with your full order. Review and tap{" "}
+                  <strong className="text-white/60">Send</strong> — our team will confirm
+                  availability, delivery charge &amp; payment details.
+                </p>
+              </form>
 
-                {/* Collapsible customer details form */}
-                {waFormOpen && (
-                  <form
-                    onSubmit={handleWhatsAppOrder}
-                    className="space-y-3 border border-white/10 bg-white/5 p-4 animate-in fade-in slide-in-from-top-2 duration-200"
-                  >
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-[#C5A059]">
-                      Your Details (required*)
-                    </p>
-
-                    {waError && (
-                      <div className="flex items-center gap-2 bg-red-900/30 border border-red-400/40 p-2.5 text-xs text-red-300">
-                        <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
-                        {waError}
-                      </div>
-                    )}
-
-                    {/* Name */}
-                    <div className="relative">
-                      <User className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#C5A059]" />
-                      <input
-                        id="wa-name"
-                        type="text"
-                        required
-                        value={waName}
-                        onChange={(e) => setWaName(e.target.value)}
-                        placeholder="Your Name *"
-                        className="w-full bg-white/10 border border-white/20 text-white placeholder:text-white/40 pl-9 pr-3 py-2.5 text-xs outline-none focus:border-[#25D366]"
-                      />
-                    </div>
-
-                    {/* Mobile */}
-                    <div className="relative">
-                      <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#C5A059]" />
-                      <input
-                        id="wa-mobile"
-                        type="tel"
-                        required
-                        value={waMobile}
-                        onChange={(e) => setWaMobile(e.target.value)}
-                        placeholder="Mobile Number * (e.g. 9876543210)"
-                        className="w-full bg-white/10 border border-white/20 text-white placeholder:text-white/40 pl-9 pr-3 py-2.5 text-xs outline-none focus:border-[#25D366]"
-                      />
-                    </div>
-
-                    {/* Address */}
-                    <div className="relative">
-                      <MapPin className="absolute left-3 top-3 h-3.5 w-3.5 text-[#C5A059]" />
-                      <textarea
-                        id="wa-address"
-                        rows={2}
-                        value={waAddress}
-                        onChange={(e) => setWaAddress(e.target.value)}
-                        placeholder="Delivery Address (optional)"
-                        className="w-full bg-white/10 border border-white/20 text-white placeholder:text-white/40 pl-9 pr-3 py-2.5 text-xs outline-none focus:border-[#25D366] resize-none"
-                      />
-                    </div>
-
-                    {/* Pincode + Note — side by side on wide screens */}
-                    <div className="grid grid-cols-2 gap-3">
-                      <input
-                        id="wa-pincode"
-                        type="text"
-                        value={waPincode}
-                        onChange={(e) => setWaPincode(e.target.value)}
-                        placeholder="Pincode (optional)"
-                        className="w-full bg-white/10 border border-white/20 text-white placeholder:text-white/40 px-3 py-2.5 text-xs outline-none focus:border-[#25D366]"
-                      />
-                      <input
-                        id="wa-delivery-note"
-                        type="text"
-                        value={waNote}
-                        onChange={(e) => setWaNote(e.target.value)}
-                        placeholder="Delivery note (optional)"
-                        className="w-full bg-white/10 border border-white/20 text-white placeholder:text-white/40 px-3 py-2.5 text-xs outline-none focus:border-[#25D366]"
-                      />
-                    </div>
-
-                    <button
-                      id="cart-whatsapp-send"
-                      type="submit"
-                      className="w-full flex items-center justify-center gap-2 py-3.5 text-xs font-bold uppercase tracking-[0.16em] text-white transition"
-                      style={{ backgroundColor: "#25D366" }}
-                      onMouseEnter={(e) =>
-                        ((e.currentTarget as HTMLButtonElement).style.backgroundColor = "#1DA851")
-                      }
-                      onMouseLeave={(e) =>
-                        ((e.currentTarget as HTMLButtonElement).style.backgroundColor = "#25D366")
-                      }
-                    >
-                      <MessageCircle className="h-4 w-4" /> OPEN WHATSAPP TO SEND ORDER
-                    </button>
-
-                    <p className="text-[10px] text-white/40 text-center leading-relaxed">
-                      WhatsApp will open with your order. Review the message and tap{" "}
-                      <strong className="text-white/60">Send</strong> to submit your enquiry.
-                    </p>
-                  </form>
-                )}
-
-                <div className="flex items-center justify-center gap-2 text-[11px] text-[#FAF7F2]/70">
-                  <ShieldCheck className="h-4 w-4 text-[#C5A059]" /> 100% Secure Checkout &amp;
-                  Botanical Guarantee
-                </div>
+              {/* Trust badge */}
+              <div className="flex items-center justify-center gap-2 text-[11px] text-[#FAF7F2]/60 border-t border-white/10 pt-4">
+                <ShieldCheck className="h-4 w-4 text-[#C5A059]" />
+                100% Handcrafted Botanical Guarantee
               </div>
             </div>
           </div>
