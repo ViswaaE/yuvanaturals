@@ -34,12 +34,6 @@ export default function Home() {
       image: "/api/images/raspberry_lip_balm",
       href: "/shop?category=Lip Care",
     },
-    {
-      title: "Cookies",
-      description: "300g packs of traditional millet cookies baked with jaggery & pure ghee.",
-      image: "/api/images/thinai_cookies",
-      href: "/cookies",
-    },
   ];
 
   // Best Sellers
@@ -99,8 +93,8 @@ export default function Home() {
       author: "Siddharth Rao",
       city: "Chennai",
       rating: 5,
-      review: "Thinai and Kavuni Black Rice cookies taste genuinely homemade. Not overly sweet, packed with fiber, and my kids love them.",
-      product: "Kavuni Black Rice Cookies",
+      review: "The Flora Lumin Elixir and Avocado Gel Cream transformed my dry skin within a week. Truly pure ingredients with a natural botanical glow.",
+      product: "Flora Lumin Elixir",
     },
   ];
 
@@ -163,7 +157,7 @@ export default function Home() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
             {CATEGORIES.map((cat) => (
               <CategoryCard key={cat.title} category={cat} />
             ))}
@@ -212,7 +206,7 @@ export default function Home() {
                 Crafted with care.
               </h2>
               <p className="text-xs sm:text-sm text-[#3E564A] leading-relaxed">
-                YUVA NATURALS combines traditional Indian herbal knowledge with carefully selected natural ingredients. Every bath bar is cold-processed to retain vital nutrients, and every cookie is slow-baked with whole traditional grains and unrefined jaggery.
+                YUVA NATURALS combines traditional Indian herbal knowledge with carefully selected natural ingredients. Every bath bar is cold-processed to retain vital nutrients, botanical shampoos are formulated for root strength, and our skincare is crafted from 100% pure botanical extracts.
               </p>
               <p className="text-xs text-[#556B61] leading-relaxed">
                 We believe skin and hair care should be free of aggressive harsh detergents, artificial fragrances, and cheap fillers. Our promise is small-batch botanical purity.
@@ -299,7 +293,7 @@ export default function Home() {
             Bring Nature Into Your Everyday Ritual
           </h2>
           <p className="text-xs sm:text-sm text-[#FAF7F2]/80 max-w-lg mx-auto leading-relaxed">
-            Experience handcrafted cold-processed soaps, high-potency hair mists, and nutrient-dense traditional grain cookies delivered across India.
+            Experience handcrafted cold-processed soaps, botanical shampoos, and pure botanical skincare delivered across India.
           </p>
           <div className="pt-3">
             <Link

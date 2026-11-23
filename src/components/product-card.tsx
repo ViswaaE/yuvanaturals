@@ -23,7 +23,17 @@ export function ProductCard({ product, showRating = true, imageAspect = "portrai
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    addToCart(product, 1);
+    const itemToAdd: Product =
+      product.sizeOptions && product.sizeOptions.length > 0
+        ? {
+            ...product,
+            id: `${product.id}-${product.sizeOptions[0].size}`,
+            size: product.sizeOptions[0].size,
+            price: product.sizeOptions[0].price,
+            originalPrice: product.sizeOptions[0].originalPrice,
+          }
+        : product;
+    addToCart(itemToAdd, 1);
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   };
@@ -101,7 +111,11 @@ export function ProductCard({ product, showRating = true, imageAspect = "portrai
             {/* Category & Size */}
             <div className="flex items-center justify-between text-[10px] font-bold tracking-[0.14em] uppercase">
               <span className="text-[#C5A059]">{product.category}</span>
-              <span className="text-[#7C907C]">{product.size || "300g"}</span>
+              <span className="text-[#7C907C]">
+                {product.sizeOptions && product.sizeOptions.length > 0
+                  ? product.sizeOptions.map((o) => o.size).join(" / ")
+                  : product.size || "300g"}
+              </span>
             </div>
 
             {/* Product Title */}
@@ -121,9 +135,21 @@ export function ProductCard({ product, showRating = true, imageAspect = "portrai
             {/* Price & Rating */}
             <div className="flex items-center justify-between">
               <div className="flex items-baseline gap-2">
-                <span className="text-base font-bold text-[#1A3C2F]">₹{product.price}</span>
-                {product.originalPrice && (
-                  <span className="text-xs text-[#7C907C] line-through">₹{product.originalPrice}</span>
+                {product.price > 0 ? (
+                  <>
+                    <span className="text-base font-bold text-[#1A3C2F]">
+                      {product.sizeOptions && product.sizeOptions.length > 0
+                        ? `From ₹${product.sizeOptions[0].price}`
+                        : `₹${product.price}`}
+                    </span>
+                    {product.originalPrice && (
+                      <span className="text-xs text-[#7C907C] line-through">₹{product.originalPrice}</span>
+                    )}
+                  </>
+                ) : (
+                  <span className="text-xs font-bold text-[#1A3C2F]">
+                    Price on Enquiry
+                  </span>
                 )}
               </div>
 

@@ -3,15 +3,13 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { Star, ShoppingBag, Heart, Check, ShieldCheck, Sparkles, ZoomIn, Zap, MessageCircle } from "lucide-react";
+import { Star, ShoppingBag, Heart, Check, ShieldCheck, Sparkles, ZoomIn, MessageCircle } from "lucide-react";
 import type { Product } from "@/types/product";
 import { ProductCard } from "@/components/product-card";
 import { useCart } from "@/context/cart-context";
 import { buildProductWhatsAppMessage, openWhatsApp } from "@/lib/whatsapp";
 
 export function ProductDetailView({ product, relatedProducts }: { product: Product; relatedProducts: Product[] }) {
-  const router = useRouter();
   const { addToCart } = useCart();
   const [selectedImg, setSelectedImg] = useState<string>(product.image);
   const [quantity, setQuantity] = useState(1);
@@ -20,18 +18,31 @@ export function ProductDetailView({ product, relatedProducts }: { product: Produ
   const [activeTab, setActiveTab] = useState<"description" | "ingredients" | "benefits" | "directions" | "reviews">("description");
   const [isZoomed, setIsZoomed] = useState(false);
 
-  const isCookie = product.category === "Cookies";
+  // Size option selector state
+  const [selectedSize, setSelectedSize] = useState<string>(
+    product.sizeOptions && product.sizeOptions.length > 0
+      ? product.sizeOptions[0].size
+      : product.size
+  );
+
+  const activeOption = product.sizeOptions?.find((opt) => opt.size === selectedSize);
+  const currentPrice = activeOption ? activeOption.price : product.price;
+  const currentOriginalPrice = activeOption?.originalPrice || product.originalPrice;
+
+  const currentProduct: Product = {
+    ...product,
+    id: activeOption ? `${product.id}-${activeOption.size}` : product.id,
+    size: selectedSize,
+    price: currentPrice,
+    originalPrice: currentOriginalPrice,
+  };
+
   const isSoap = product.category === "Bath Bars" || product.category === "Herbal Soaps";
 
   const handleAddToCart = () => {
-    addToCart(product, quantity);
+    addToCart(currentProduct, quantity);
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
-  };
-
-  const handleBuyNow = () => {
-    addToCart(product, quantity);
-    router.push("/checkout");
   };
 
   const handleOrderOnWhatsApp = () => {
@@ -39,7 +50,7 @@ export function ProductDetailView({ product, relatedProducts }: { product: Produ
       typeof window !== "undefined"
         ? `${window.location.origin}/product/${product.slug}`
         : undefined;
-    const message = buildProductWhatsAppMessage(product, quantity, pageUrl);
+    const message = buildProductWhatsAppMessage(currentProduct, quantity, pageUrl);
     openWhatsApp(message);
   };
 
@@ -48,8 +59,8 @@ export function ProductDetailView({ product, relatedProducts }: { product: Produ
       {/* Breadcrumb */}
       <nav className="text-xs text-[#7C907C] font-medium flex items-center gap-1.5 uppercase tracking-wider">
         <Link href="/" className="hover:text-[#1A3C2F]">Home</Link> /{" "}
-        <Link href={isCookie ? "/cookies" : "/shop"} className="hover:text-[#1A3C2F]">
-          {isCookie ? "Cookies" : "Shop"}
+        <Link href="/shop" className="hover:text-[#1A3C2F]">
+          Shop
         </Link> /{" "}
         <span className="text-[#1A3C2F] font-semibold truncate max-w-xs">{product.name}</span>
       </nav>
@@ -105,7 +116,9 @@ export function ProductDetailView({ product, relatedProducts }: { product: Produ
             <div className="flex items-center justify-between text-xs font-semibold text-[#C5A059] uppercase tracking-wider">
               <span>{product.category}</span>
               <span className="bg-[#F3EDE4] px-3 py-1 text-[#1A3C2F] font-bold text-[11px]">
-                Weight: {isSoap ? "125g / 4.4 oz" : isCookie ? "300g" : product.size || "250ml"}
+                {product.sizeOptions && product.sizeOptions.length > 0
+                  ? `Size: ${selectedSize}`
+                  : `Weight: ${product.size || (isSoap ? "125g / 4.4 oz" : "100ml")}`}
               </span>
             </div>
 
@@ -129,16 +142,54 @@ export function ProductDetailView({ product, relatedProducts }: { product: Produ
 
             {/* Price in ₹ */}
             <div className="flex items-baseline gap-3 pt-1">
-              <span className="text-3xl sm:text-4xl font-bold text-[#1A3C2F]">₹{product.price}</span>
-              {product.originalPrice && (
-                <span className="text-base text-[#7C907C] line-through">₹{product.originalPrice}</span>
-              )}
-              {product.originalPrice && (
-                <span className="text-xs font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 border border-emerald-200 uppercase">
-                  Save ₹{product.originalPrice - product.price}
+              {currentPrice > 0 ? (
+                <>
+                  <span className="text-3xl sm:text-4xl font-bold text-[#1A3C2F]">₹{currentPrice}</span>
+                  {currentOriginalPrice && (
+                    <span className="text-base text-[#7C907C] line-through">₹{currentOriginalPrice}</span>
+                  )}
+                  {currentOriginalPrice && (
+                    <span className="text-xs font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 border border-emerald-200 uppercase">
+                      Save ₹{currentOriginalPrice - currentPrice}
+                    </span>
+                  )}
+                </>
+              ) : (
+                <span className="text-xl sm:text-2xl font-bold text-[#1A3C2F]">
+                  Price on WhatsApp Enquiry
                 </span>
               )}
             </div>
+
+            {/* Size Selector (e.g. 30ml / 50ml) */}
+            {product.sizeOptions && product.sizeOptions.length > 0 && (
+              <div className="pt-2 space-y-2 border-t border-[#E5DFD5]">
+                <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-[#1A3C2F]">
+                  <span>Select Size:</span>
+                  <span className="text-[#C5A059]">{selectedSize}</span>
+                </div>
+                <div className="flex flex-wrap gap-2.5">
+                  {product.sizeOptions.map((opt) => {
+                    const isSelected = selectedSize === opt.size;
+                    return (
+                      <button
+                        key={opt.size}
+                        type="button"
+                        onClick={() => setSelectedSize(opt.size)}
+                        className={`px-4 py-2 text-xs font-bold uppercase tracking-wider border transition-all ${
+                          isSelected
+                            ? "bg-[#1A3C2F] text-[#FAF7F2] border-[#1A3C2F] shadow-xs ring-1 ring-[#1A3C2F]"
+                            : "bg-[#FAF7F2] text-[#1A3C2F] border-[#E5DFD5] hover:border-[#1A3C2F]"
+                        }`}
+                      >
+                        <span>{opt.size}</span>
+                        <span className="ml-2 opacity-80">&bull; ₹{opt.price}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
             {/* Short Description */}
             <p className="text-xs sm:text-sm leading-relaxed text-[#3E564A]">
@@ -194,23 +245,17 @@ export function ProductDetailView({ product, relatedProducts }: { product: Produ
                   </>
                 ) : (
                   <>
-                    <ShoppingBag className="h-4 w-4 text-[#C5A059]" /> Add to Cart &bull; ₹{product.price * quantity}
+                    <ShoppingBag className="h-4 w-4 text-[#C5A059]" />{" "}
+                    {currentPrice > 0 ? `Add to Cart • ₹${currentPrice * quantity}` : "Add to Cart"}
                   </>
                 )}
-              </button>
-
-              <button
-                onClick={handleBuyNow}
-                className="flex items-center justify-center gap-2 bg-[#C5A059] px-7 py-3.5 text-xs font-bold uppercase tracking-[0.16em] text-[#1A3C2F] hover:bg-white transition border border-[#C5A059]"
-              >
-                <Zap className="h-4 w-4" /> Buy Now
               </button>
 
               {/* WhatsApp single-product order */}
               <button
                 id="pdp-order-on-whatsapp"
                 onClick={handleOrderOnWhatsApp}
-                className="flex items-center justify-center gap-2 px-5 py-3.5 text-xs font-bold uppercase tracking-[0.16em] text-white transition"
+                className="flex-1 flex items-center justify-center gap-2 px-6 py-3.5 text-xs font-bold uppercase tracking-[0.16em] text-white shadow-md transition"
                 style={{ backgroundColor: "#25D366" }}
                 onMouseEnter={(e) =>
                   ((e.currentTarget as HTMLButtonElement).style.backgroundColor = "#1DA851")
@@ -221,13 +266,12 @@ export function ProductDetailView({ product, relatedProducts }: { product: Produ
                 title="Order this product via WhatsApp"
               >
                 <MessageCircle className="h-4 w-4" />
-                <span className="hidden sm:inline">ORDER ON WHATSAPP</span>
-                <span className="sm:hidden">WhatsApp</span>
+                <span>ORDER ON WHATSAPP</span>
               </button>
 
               <button
                 onClick={() => setIsWishlisted(!isWishlisted)}
-                className={`border p-3.5 transition ${
+                className={`border p-3.5 transition flex items-center justify-center ${
                   isWishlisted ? "bg-red-50 text-red-500 border-red-200" : "border-[#E5DFD5] text-[#1A3C2F] hover:bg-[#F3EDE4]"
                 }`}
                 aria-label="Wishlist"
@@ -237,9 +281,9 @@ export function ProductDetailView({ product, relatedProducts }: { product: Produ
             </div>
 
             <div className="grid grid-cols-3 gap-2 pt-3 text-center border-t border-[#E5DFD5] text-[10px] uppercase font-semibold text-[#556B61] tracking-wider">
-              <div>&bull; Free Shipping &gt; ₹5000</div>
+              <div>&bull; Free Shipping &gt; ₹500</div>
               <div>&bull; 100% Handcrafted</div>
-              <div>&bull; Traditional Recipe</div>
+              <div>&bull; WhatsApp Order Only</div>
             </div>
           </div>
         </div>
@@ -253,7 +297,7 @@ export function ProductDetailView({ product, relatedProducts }: { product: Produ
               { id: "description", label: "Description" },
               { id: "ingredients", label: "Ingredients" },
               { id: "benefits", label: "Benefits" },
-              { id: "directions", label: isCookie ? "Storage & Serving" : "How to Use" },
+              { id: "directions", label: "How to Use" },
               { id: "reviews", label: `Reviews (${product.customerReviews?.length || product.reviews})` },
             ] as const
           ).map((tab) => (
@@ -315,7 +359,7 @@ export function ProductDetailView({ product, relatedProducts }: { product: Produ
           {activeTab === "directions" && (
             <div className="space-y-4">
               <h3 className="text-lg font-bold font-serif text-[#1A3C2F]">
-                {isCookie ? "Storage & Serving Instructions" : "How to Use"}
+                How to Use
               </h3>
               <div className="space-y-3">
                 {product.directions.map((step, i) => (
@@ -373,7 +417,7 @@ export function ProductDetailView({ product, relatedProducts }: { product: Produ
         <section className="space-y-6">
           <div className="flex items-center justify-between border-b border-[#E5DFD5] pb-3">
             <h2 className="text-2xl font-bold font-serif text-[#1A3C2F]">Complementary Products</h2>
-            <Link href={isCookie ? "/cookies" : "/shop"} className="text-xs font-bold tracking-wider uppercase text-[#1A3C2F] hover:text-[#C5A059] transition">
+            <Link href="/shop" className="text-xs font-bold tracking-wider uppercase text-[#1A3C2F] hover:text-[#C5A059] transition">
               View All &rarr;
             </Link>
           </div>

@@ -15,7 +15,6 @@ const CATEGORIES_LIST = [
   "Premium Shampoos",
   "Organic Skincare",
   "Lip Care",
-  "Cookies",
   "Best Sellers",
   "New Arrivals",
   "Gift Collections",
@@ -28,7 +27,7 @@ function ShopContent() {
 
   const [activeCategory, setActiveCategory] = useState<string>(initialCategory);
   const [searchQuery, setSearchQuery] = useState(initialQuery);
-  const [maxPrice, setMaxPrice] = useState<number>(500);
+  const [maxPrice, setMaxPrice] = useState<number>(1000);
   const [sortBy, setSortBy] = useState<"featured" | "price-low" | "price-high" | "rating">("featured");
 
   useEffect(() => {
@@ -78,7 +77,7 @@ function ShopContent() {
           Shop Our Natural Collection
         </h1>
         <p className="max-w-lg mx-auto text-xs sm:text-sm text-[#556B61] leading-relaxed">
-          Pure goat milk bath bars, botanical shampoos, nourishing skincare, and wholesome millet cookies. All prices in Indian Rupees (₹).
+          Pure goat milk bath bars, botanical shampoos, nourishing skincare, and natural lip care. All prices in Indian Rupees (₹).
         </p>
 
         {/* Category Filter Pills */}
@@ -117,8 +116,8 @@ function ShopContent() {
               <input
                 type="range"
                 min="100"
-                max="500"
-                step="10"
+                max="1000"
+                step="20"
                 value={maxPrice}
                 onChange={(e) => setMaxPrice(Number(e.target.value))}
                 className="accent-[#1A3C2F] cursor-pointer"

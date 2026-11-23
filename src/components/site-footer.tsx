@@ -10,11 +10,11 @@ export function SiteFooter() {
           <div className="lg:col-span-4 space-y-4">
             <YuvaLogo variant="footer" showTagline={true} />
             <p className="text-xs leading-relaxed text-[#FAF7F2]/80 max-w-sm">
-              Handcrafted Ayurvedic bath bars, botanical shampoos, nourishing skincare, and wholesome millet cookies rooted in traditional Indian care.
+              Handcrafted Ayurvedic bath bars, botanical shampoos, and nourishing botanical skincare rooted in traditional Indian care.
             </p>
             <div className="pt-1 text-[11px] text-[#FAF7F2]/60 space-y-1">
               <p>Email: care@yuvanaturals.com</p>
-              <p>WhatsApp Support: +91 98765 43210</p>
+              <p>WhatsApp Support: +91 97897 12866</p>
             </div>
           </div>
 
@@ -26,7 +26,6 @@ export function SiteFooter() {
               <li><Link href="/shop?category=Premium Shampoos" className="hover:text-[#C5A059] transition">Shampoos</Link></li>
               <li><Link href="/shop?category=Organic Skincare" className="hover:text-[#C5A059] transition">Skincare</Link></li>
               <li><Link href="/shop?category=Lip Care" className="hover:text-[#C5A059] transition">Lip Care</Link></li>
-              <li><Link href="/cookies" className="hover:text-[#C5A059] transition font-medium text-[#C5A059]">Cookies</Link></li>
             </ul>
           </div>
 
@@ -48,7 +47,7 @@ export function SiteFooter() {
             <ul className="space-y-2 text-xs text-[#FAF7F2]/80">
               <li><a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-[#C5A059] transition">Instagram</a></li>
               <li><a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="hover:text-[#C5A059] transition">Facebook</a></li>
-              <li><a href="https://wa.me" target="_blank" rel="noopener noreferrer" className="hover:text-[#C5A059] transition">WhatsApp Direct</a></li>
+              <li><a href="https://wa.me/919789712866" target="_blank" rel="noopener noreferrer" className="hover:text-[#C5A059] transition">WhatsApp Direct</a></li>
             </ul>
           </div>
         </div>

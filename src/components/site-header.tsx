@@ -18,7 +18,6 @@ export function SiteHeader() {
     { label: "Shampoos", href: "/shop?category=Premium Shampoos" },
     { label: "Skincare", href: "/shop?category=Organic Skincare" },
     { label: "Lip Care", href: "/shop?category=Lip Care" },
-    { label: "Cookies", href: "/cookies" },
     { label: "Contact", href: "/contact" },
   ];
 
@@ -26,7 +25,7 @@ export function SiteHeader() {
     <header className="sticky top-0 z-50 bg-[#FAF7F2]/95 border-b border-[#E5DFD5] backdrop-blur-md transition-all">
       {/* Slim Announcement Bar */}
       <div className="bg-[#1A3C2F] py-1.5 px-4 text-center text-[10px] sm:text-[11px] font-medium tracking-[0.18em] uppercase text-[#FAF7F2]">
-        <span>FREE SHIPPING ON ORDERS ABOVE ₹5000 &bull; HANDCRAFTED BOTANICAL CARE</span>
+        <span>FREE SHIPPING ON ORDERS ABOVE ₹500 &bull; HANDCRAFTED BOTANICAL CARE</span>
       </div>
 
       {/* Main Navigation Container */}
@@ -53,9 +52,7 @@ export function SiteHeader() {
             <Link
               key={link.label}
               href={link.href}
-              className={`transition-colors hover:text-[#C5A059] py-1 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[1.5px] after:bg-[#C5A059] hover:after:w-full after:transition-all ${
-                link.label === "Cookies" ? "font-semibold text-[#1A3C2F]" : ""
-              }`}
+              className="transition-colors hover:text-[#C5A059] py-1 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[1.5px] after:bg-[#C5A059] hover:after:w-full after:transition-all"
             >
               {link.label}
             </Link>
@@ -86,7 +83,7 @@ export function SiteHeader() {
                   name="q"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search soaps, skincare, cookies..."
+                  placeholder="Search soaps, shampoos, skincare..."
                   autoFocus
                   className="w-full bg-[#FAF7F2] px-3 py-2 text-xs text-[#1A3C2F] outline-none border border-[#E5DFD5] focus:border-[#1A3C2F] rounded-xs"
                 />

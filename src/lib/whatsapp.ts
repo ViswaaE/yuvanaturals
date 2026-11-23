@@ -40,6 +40,9 @@ export function buildCartWhatsAppMessage(
   cart.forEach(({ product, quantity }, index) => {
     const subtotal = product.price * quantity;
     lines.push(`${index + 1}. ${product.name}`);
+    if (product.size) {
+      lines.push(`   Size: ${product.size}`);
+    }
     lines.push(`   Quantity: ${quantity}`);
     lines.push(`   Price: ₹${product.price} each`);
     lines.push(`   Subtotal: ₹${subtotal}`);

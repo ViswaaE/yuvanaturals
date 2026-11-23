@@ -19,16 +19,31 @@ export function QuickViewModal({ product, onClose }: QuickViewModalProps) {
   const [added, setAdded] = useState(false);
   const [isWishlisted, setIsWishlisted] = useState(false);
 
+  // Size option selector state
+  const [selectedSize, setSelectedSize] = useState<string>(
+    product?.sizeOptions && product.sizeOptions.length > 0
+      ? product.sizeOptions[0].size
+      : product?.size || ""
+  );
+
   if (!product) return null;
 
   const currentImage = selectedImage || product.image;
+  const activeOption = product.sizeOptions?.find((opt) => opt.size === selectedSize);
+  const currentPrice = activeOption ? activeOption.price : product.price;
+  const currentOriginalPrice = activeOption?.originalPrice || product.originalPrice;
 
   const handleAddToCart = () => {
-    if (product) {
-      addToCart(product, quantity);
-      setAdded(true);
-      setTimeout(() => setAdded(false), 2500);
-    }
+    const activeProduct: Product = {
+      ...product,
+      id: activeOption ? `${product.id}-${activeOption.size}` : product.id,
+      size: selectedSize,
+      price: currentPrice,
+      originalPrice: currentOriginalPrice,
+    };
+    addToCart(activeProduct, quantity);
+    setAdded(true);
+    setTimeout(() => setAdded(false), 2500);
   };
 
   return (
@@ -81,7 +96,9 @@ export function QuickViewModal({ product, onClose }: QuickViewModalProps) {
             <div className="space-y-3">
               <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-[#C5A059]">
                 <span>{product.category}</span>
-                <span className="bg-[#F3EDE4] px-2.5 py-0.5 text-[#1A3C2F] font-bold">{product.size || "125g"}</span>
+                <span className="bg-[#F3EDE4] px-2.5 py-0.5 text-[#1A3C2F] font-bold">
+                  {product.sizeOptions && product.sizeOptions.length > 0 ? selectedSize : product.size || "125g"}
+                </span>
               </div>
 
               <h2 className="text-xl sm:text-2xl font-serif font-bold text-[#1A3C2F]">{product.name}</h2>
@@ -96,11 +113,47 @@ export function QuickViewModal({ product, onClose }: QuickViewModalProps) {
               </div>
 
               <div className="flex items-baseline gap-3 pt-1">
-                <span className="text-2xl font-bold text-[#1A3C2F]">₹{product.price}</span>
-                {product.originalPrice && (
-                  <span className="text-sm text-[#7C907C] line-through">₹{product.originalPrice}</span>
+                {currentPrice > 0 ? (
+                  <>
+                    <span className="text-2xl font-bold text-[#1A3C2F]">₹{currentPrice}</span>
+                    {currentOriginalPrice && (
+                      <span className="text-sm text-[#7C907C] line-through">₹{currentOriginalPrice}</span>
+                    )}
+                  </>
+                ) : (
+                  <span className="text-lg font-bold text-[#1A3C2F]">Price on WhatsApp Enquiry</span>
                 )}
               </div>
+
+              {/* Size Selector in Quick View */}
+              {product.sizeOptions && product.sizeOptions.length > 0 && (
+                <div className="pt-2 space-y-1.5 border-t border-[#E5DFD5]">
+                  <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-[#1A3C2F]">
+                    <span>Select Size:</span>
+                    <span className="text-[#C5A059]">{selectedSize}</span>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {product.sizeOptions.map((opt) => {
+                      const isSelected = selectedSize === opt.size;
+                      return (
+                        <button
+                          key={opt.size}
+                          type="button"
+                          onClick={() => setSelectedSize(opt.size)}
+                          className={`px-3 py-1.5 text-xs font-bold uppercase tracking-wider border transition-all ${
+                            isSelected
+                              ? "bg-[#1A3C2F] text-[#FAF7F2] border-[#1A3C2F] shadow-2xs"
+                              : "bg-[#FAF7F2] text-[#1A3C2F] border-[#E5DFD5] hover:border-[#1A3C2F]"
+                          }`}
+                        >
+                          <span>{opt.size}</span>
+                          <span className="ml-1.5 opacity-80">&bull; ₹{opt.price}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
 
               <p className="text-xs text-[#3E564A] leading-relaxed">{product.shortDescription}</p>
 
@@ -146,7 +199,8 @@ export function QuickViewModal({ product, onClose }: QuickViewModalProps) {
                     </>
                   ) : (
                     <>
-                      <ShoppingBag className="h-4 w-4 text-[#C5A059]" /> Add to Cart — ₹{product.price * quantity}
+                      <ShoppingBag className="h-4 w-4 text-[#C5A059]" />{" "}
+                      {currentPrice > 0 ? `Add to Cart — ₹${currentPrice * quantity}` : "Add to Cart"}
                     </>
                   )}
                 </button>

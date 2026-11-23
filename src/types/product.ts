@@ -4,7 +4,6 @@ export type ProductCategory =
   | "Premium Shampoos"
   | "Organic Skincare"
   | "Lip Care"
-  | "Cookies"
   | "Best Sellers"
   | "New Arrivals"
   | "Gift Collections";
@@ -19,6 +18,12 @@ export interface Review {
   verified: boolean;
 }
 
+export interface SizeOption {
+  size: string;
+  price: number;
+  originalPrice?: number;
+}
+
 export interface Product {
   id: string;
   slug: string;
@@ -26,6 +31,7 @@ export interface Product {
   price: number;
   originalPrice?: number;
   size: string;
+  sizeOptions?: SizeOption[];
   category: ProductCategory;
   collections: ProductCategory[];
   shortDescription: string;

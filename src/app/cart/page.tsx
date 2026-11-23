@@ -125,8 +125,7 @@ export default function CartPage() {
             <ShoppingCart className="h-12 w-12 text-[#C5A059] mx-auto opacity-70" />
             <h2 className="text-2xl font-serif font-bold">Your Cart is Currently Empty</h2>
             <p className="text-xs text-[#556B61] max-w-sm mx-auto leading-relaxed">
-              Explore our handcrafted cold-processed soaps, hair cleansers, and traditional grain
-              cookies.
+              Explore our handcrafted cold-processed soaps, botanical hair cleansers, and nourishing skincare.
             </p>
             <div className="pt-2">
               <Link
@@ -174,7 +173,9 @@ export default function CartPage() {
                         <h3 className="text-xs sm:text-sm font-bold text-[#1A3C2F] line-clamp-1">
                           {product.name}
                         </h3>
-                        <p className="text-xs text-[#7C907C] mt-0.5">₹{product.price} each</p>
+                        <p className="text-xs text-[#7C907C] mt-0.5">
+                          {product.price > 0 ? `₹${product.price} each` : "Price on WhatsApp Enquiry"}
+                        </p>
                       </div>
                     </div>
 
@@ -199,7 +200,7 @@ export default function CartPage() {
                       </div>
 
                       <span className="text-sm font-bold text-[#1A3C2F]">
-                        ₹{product.price * quantity}
+                        {product.price > 0 ? `₹${product.price * quantity}` : "On Enquiry"}
                       </span>
 
                       <button
