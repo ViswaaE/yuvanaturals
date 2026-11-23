@@ -45,7 +45,7 @@ export function SiteFooter() {
           <div className="lg:col-span-2 space-y-3">
             <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-[#C5A059]">CONNECT</h4>
             <ul className="space-y-2 text-xs text-[#FAF7F2]/80">
-              <li><a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-[#C5A059] transition">Instagram</a></li>
+              <li><a href="https://www.instagram.com/yuva_naturals/" target="_blank" rel="noopener noreferrer" className="hover:text-[#C5A059] transition">Instagram (@yuva_naturals)</a></li>
               <li><a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="hover:text-[#C5A059] transition">Facebook</a></li>
               <li><a href="https://wa.me/919789712866" target="_blank" rel="noopener noreferrer" className="hover:text-[#C5A059] transition">WhatsApp Direct</a></li>
             </ul>

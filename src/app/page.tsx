@@ -5,6 +5,7 @@ import { PageShell } from "@/components/page-shell";
 import { ProductCard } from "@/components/product-card";
 import { HeroSection } from "@/components/hero-section";
 import { CategoryCard, type CategoryCardData } from "@/components/category-card";
+import { InstagramReelsSection } from "@/components/instagram-reels-section";
 import { products } from "@/constants/products";
 
 export default function Home() {
@@ -248,7 +249,10 @@ export default function Home() {
           </div>
         </section>
 
-        {/* 8. CUSTOMER TESTIMONIALS */}
+        {/* 8. INSTAGRAM REELS VIDEO SECTION */}
+        <InstagramReelsSection />
+
+        {/* 9. CUSTOMER TESTIMONIALS */}
         <section className="bg-[#F3EDE4] border border-[#E5DFD5] p-6 sm:p-12 space-y-8">
           <div className="text-center max-w-md mx-auto space-y-1">
             <span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#C5A059]">VERIFIED REVIEWS</span>
@@ -284,7 +288,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* 9. FINAL CTA */}
+        {/* 10. FINAL CTA */}
         <section className="bg-[#1A3C2F] text-[#FAF7F2] p-8 sm:p-14 text-center max-w-4xl mx-auto space-y-4 shadow-xl">
           <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-[#C5A059]">
             DAILY BOTANICAL WELLNESS
