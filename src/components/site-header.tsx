@@ -7,7 +7,7 @@ import { YuvaLogo } from "./yuva-logo";
 import { useCart } from "@/context/cart-context";
 
 export function SiteHeader() {
-  const { totalItemsCount } = useCart();
+  const { totalItemsCount, isHydrated } = useCart();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
@@ -117,7 +117,7 @@ export function SiteHeader() {
               <ShoppingBag className="h-3.5 w-3.5 text-[#C5A059]" />
               <span className="hidden sm:inline uppercase">Cart</span>
               <span className="flex h-4 min-w-[16px] items-center justify-center rounded-full bg-[#C5A059] px-1 text-[10px] font-bold text-[#122B22]">
-                {totalItemsCount}
+                {isHydrated ? totalItemsCount : 0}
               </span>
             </button>
           </Link>
@@ -140,7 +140,7 @@ export function SiteHeader() {
             ))}
             <div className="pt-2 flex items-center justify-between text-xs text-[#7C907C]">
               <Link href="/cart" onClick={() => setMobileMenuOpen(false)} className="font-semibold text-[#1A3C2F]">
-                Cart ({totalItemsCount} items)
+                Cart ({isHydrated ? totalItemsCount : 0} items)
               </Link>
               <Link href="/wishlist" onClick={() => setMobileMenuOpen(false)} className="hover:underline">
                 Wishlist

@@ -40,6 +40,7 @@ export default function CartPage() {
     couponApplied,
     applyCoupon,
     removeCoupon,
+    isHydrated,
   } = useCart();
 
   const [inputCoupon, setInputCoupon] = useState("");
@@ -119,7 +120,13 @@ export default function CartPage() {
           </p>
         </section>
 
-        {cart.length === 0 ? (
+        {!isHydrated ? (
+          /* Client Hydration Loading State */
+          <div className="border border-[#E5DFD5] bg-white p-12 text-center text-[#1A3C2F] space-y-4 max-w-2xl mx-auto">
+            <div className="h-8 w-8 border-2 border-[#1A3C2F] border-t-[#C5A059] rounded-full animate-spin mx-auto" />
+            <p className="text-xs text-[#556B61] tracking-wide">Loading your shopping bag...</p>
+          </div>
+        ) : cart.length === 0 ? (
           /* Empty Cart View */
           <div className="border border-[#E5DFD5] bg-white p-12 text-center text-[#1A3C2F] space-y-4 max-w-2xl mx-auto">
             <ShoppingCart className="h-12 w-12 text-[#C5A059] mx-auto opacity-70" />
