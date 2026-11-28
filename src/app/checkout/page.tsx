@@ -26,7 +26,7 @@ import {
 } from "lucide-react";
 
 export default function CheckoutPage() {
-  const { cart, finalTotal, rawSubtotal, discountAmount, shippingCost, couponCode, clearCart } =
+  const { cart, finalTotal, rawSubtotal, discountAmount, couponCode, clearCart } =
     useCart();
 
   // Customer Shipping Details State
@@ -530,13 +530,6 @@ export default function CheckoutPage() {
                         <span>-₹{discountAmount}</span>
                       </div>
                     )}
-
-                    <div className="flex justify-between">
-                      <span>Delivery Charge</span>
-                      <span className="font-bold text-emerald-300">
-                        {shippingCost === 0 ? "FREE" : `₹${shippingCost}`}
-                      </span>
-                    </div>
 
                     <div className="flex justify-between border-t border-white/10 pt-4 text-base font-bold text-[#FAF7F2]">
                       <span>Grand Total</span>

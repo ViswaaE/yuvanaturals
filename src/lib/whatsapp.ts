@@ -50,9 +50,7 @@ export function buildCartWhatsAppMessage(
   });
 
   lines.push(HR);
-  lines.push(`Items Total: ₹${rawSubtotal}`);
-  lines.push("Shipping: To be confirmed");
-  lines.push(`Grand Total: ₹${rawSubtotal} + shipping, if applicable`);
+  lines.push(`Total Amount: ₹${rawSubtotal}`);
 
   if (customer && (customer.name || customer.mobile)) {
     lines.push("");
@@ -66,7 +64,7 @@ export function buildCartWhatsAppMessage(
 
   lines.push("");
   lines.push(
-    "Please confirm product availability, delivery charges and the final payable amount. Thank you!"
+    "Please confirm product availability and order details. Thank you!"
   );
 
   return lines.join("\n");
@@ -96,12 +94,10 @@ export function buildProductWhatsAppMessage(
   if (pageUrl) lines.push(`   Product Link: ${pageUrl}`);
   lines.push("");
   lines.push(HR);
-  lines.push(`Items Total: ₹${subtotal}`);
-  lines.push("Shipping: To be confirmed");
-  lines.push(`Grand Total: ₹${subtotal} + shipping, if applicable`);
+  lines.push(`Total Amount: ₹${subtotal}`);
   lines.push("");
   lines.push(
-    "Please confirm availability, delivery charges and the final payable amount. Thank you!"
+    "Please confirm product availability and order details. Thank you!"
   );
 
   return lines.join("\n");

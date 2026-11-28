@@ -34,7 +34,6 @@ export default function CartPage() {
     removeFromCart,
     rawSubtotal,
     discountAmount,
-    shippingCost,
     finalTotal,
     couponCode,
     couponApplied,
@@ -288,15 +287,8 @@ export default function CartPage() {
                     </div>
                   )}
 
-                  <div className="flex justify-between">
-                    <span>Shipping Fee</span>
-                    <span className="font-bold text-emerald-300">
-                      {shippingCost === 0 ? "FREE (Orders > ₹500)" : `₹${shippingCost}`}
-                    </span>
-                  </div>
-
                   <div className="flex justify-between border-t border-white/10 pt-4 text-base font-bold text-[#FAF7F2]">
-                    <span>Estimated Total</span>
+                    <span>Total</span>
                     <span className="text-2xl font-extrabold text-[#C5A059]">₹{finalTotal}</span>
                   </div>
                 </div>
@@ -305,7 +297,7 @@ export default function CartPage() {
                 <div className="flex items-start gap-2.5 bg-white/5 border border-white/10 p-3 text-[11px] text-[#FAF7F2]/70 leading-relaxed">
                   <Info className="h-3.5 w-3.5 text-[#C5A059] flex-shrink-0 mt-0.5" />
                   <span>
-                    We confirm orders via WhatsApp. Final shipping charges and payment details will
+                    We confirm orders via WhatsApp. Order details and payment instructions will
                     be shared by our team after you send the order.
                   </span>
                 </div>
@@ -436,7 +428,7 @@ export default function CartPage() {
                 <p className="text-[10px] text-white/40 text-center leading-relaxed">
                   WhatsApp will open with your full order. Review and tap{" "}
                   <strong className="text-white/60">Send</strong> — our team will confirm
-                  availability, delivery charge &amp; payment details.
+                  availability &amp; order details.
                 </p>
               </form>
 

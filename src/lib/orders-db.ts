@@ -217,10 +217,10 @@ export const ordersDb = {
       discount = Math.round(subtotal * 0.15);
     }
 
-    // 4. Shipping cost calculation (FREE on orders >= ₹500, else ₹60)
+    // 4. Delivery charges completely removed
     const netSubtotal = subtotal - discount;
-    const shipping = netSubtotal >= 500 ? 0 : 60;
-    const grandTotal = netSubtotal + shipping;
+    const shipping = 0;
+    const grandTotal = netSubtotal;
 
     // 5. Initial Payment & Order Status setup
     let paymentStatus: PaymentStatus = "Pending";

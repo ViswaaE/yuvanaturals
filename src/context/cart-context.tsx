@@ -269,10 +269,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const discountAmount = couponApplied ? Math.round(rawSubtotal * 0.15) : 0;
 
-  // Free shipping over ₹500
-  const shippingCost = rawSubtotal === 0 ? 0 : rawSubtotal >= 500 ? 0 : 50;
+  // No delivery charges calculated or added anywhere
+  const shippingCost = 0;
 
-  const finalTotal = Math.max(0, rawSubtotal - discountAmount + shippingCost);
+  const finalTotal = Math.max(0, rawSubtotal - discountAmount);
 
   return (
     <CartContext.Provider

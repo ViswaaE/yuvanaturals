@@ -58,7 +58,6 @@ function renderOrderItemsTable(order: Order): string {
     <div style="margin-top: 15px; border-top: 1px solid #1A3C2F; padding-top: 10px; text-align: right; font-size: 13px; color: #1A3C2F;">
       <p style="margin: 3px 0;">Subtotal: <strong>₹${order.subtotal}</strong></p>
       ${order.discount > 0 ? `<p style="margin: 3px 0; color: #10B981;">Discount: <strong>-₹${order.discount}</strong></p>` : ""}
-      <p style="margin: 3px 0;">Shipping: <strong>${order.shipping === 0 ? "FREE" : `₹${order.shipping}`}</strong></p>
       <p style="margin: 8px 0 0 0; font-size: 16px; font-weight: bold; color: ${GOLD_COLOR};">Grand Total: ₹${order.grandTotal}</p>
     </div>
   `;
